@@ -1,0 +1,19 @@
+{
+  "name": "simplicity-playground-lib",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bit-matrix/simplicity-playground-lib.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bit-matrix/simplicity-playground-lib/issues"
+  },
+  "homepage": "https://github.com/bit-matrix/simplicity-playground-lib#readme"
+}
