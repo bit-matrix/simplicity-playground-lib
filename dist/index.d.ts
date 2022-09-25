@@ -1,1 +1,1 @@
-declare const init = "welcome";
+export declare const stringifyData: (input: any[]) => string;
