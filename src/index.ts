@@ -1,57 +1,137 @@
-import { iden, injl, injr, pair, unit } from "./core";
+// import { iden, injl, injr, pair, unit } from "./core";
 
-let output = "";
+import { core } from "./core";
+import { test, textConverter } from "./textConverter";
 
-export const stringifyData = (input: any[]) => {
-  const tag = input[0];
+// let output = "";
 
-  if (tag == 0) {
-  } else if (tag == 1) {
-    output += "σL(";
-  } else if (tag == 2) {
-    output += "σR(";
-  }
+// export const stringifyData = (input: any[]) => {
+//   const tag = input[0];
 
-  if (input.length == 2) {
-    if (input[1] == 1) {
-      output += "<>";
-    } else {
-      stringifyData(input[1]);
+//   if (tag == 0) {
+//   } else if (tag == 1) {
+//     output += "σL(";
+//   } else if (tag == 2) {
+//     output += "σR(";
+//   }
+
+//   if (input.length == 2) {
+//     if (input[1] == 1) {
+//       output += "<>";
+//     } else {
+//       stringifyData(input[1]);
+//     }
+//   } else {
+//     output += "<";
+//     if (input[1] == 1) {
+//       output += "<>";
+//     } else {
+//       stringifyData(input[1]);
+//     }
+//     output += ",";
+//     if (input[2] == 1) {
+//       output += "<>";
+//     } else {
+//       stringifyData(input[2]);
+//     }
+//     output += ">";
+//   }
+
+//   if (tag == 0) {
+//   } else if (tag == 1) {
+//     output += ")";
+//   } else if (tag == 2) {
+//     output += ")";
+//   }
+
+//   return output;
+// };
+
+// const true_bit = injr(null, unit);
+// const false_bit = injl(null, unit);
+
+// const output_ = injr(false_bit, iden);
+
+// // const result = stringifyData(output_ || []);
+
+// console.log(result);
+
+// textConverter();
+
+const compiler = (text: string) => {
+  const finalData = [];
+
+  let i = 0;
+  let result = test(text, i);
+  finalData.push(result);
+
+  const data = finalData[i];
+
+  const recursive = () => {
+    i++;
+    // let stop = false;
+
+    if (data.a) {
+      let aText: string = data.a.substring(1);
+      aText = aText.slice(0, -1);
+
+      if (aText.charAt(aText.length - 1) === ")") {
+        const resultA = test(aText, i);
+        finalData.push(resultA);
+      } else {
+        // stop = true;
+      }
     }
-  } else {
-    output += "<";
-    if (input[1] == 1) {
-      output += "<>";
-    } else {
-      stringifyData(input[1]);
-    }
-    output += ",";
-    if (input[2] == 1) {
-      output += "<>";
-    } else {
-      stringifyData(input[2]);
-    }
-    output += ">";
-  }
 
-  if (tag == 0) {
-  } else if (tag == 1) {
-    output += ")";
-  } else if (tag == 2) {
-    output += ")";
-  }
+    if (data.b) {
+      let bText = data.b.substring(1);
+      bText = bText.slice(0, -1);
 
-  return output;
+      if (bText.charAt(bText.length - 1) === ")") {
+        const resultB = test(bText, i);
+        finalData.push(resultB);
+      } else {
+        // stop = true;
+      }
+    }
+
+    // console.log(stop);
+    // recursive();
+  };
+
+  recursive();
+
+  console.log(finalData);
+  return finalData;
 };
 
-//const input = [2, [2, [1, [0, 1]]], [2, [1, [0, 1]]]];
-const input1 = injr(injl(null, unit), iden);
-const input2 = injr(injl(null, unit), iden);
+// let i = 1;
 
-//const input3 = pair(input1, [injl, iden], [injl, unit]);
-const inputt = injr(unit(), iden);
-const input3 = pair(inputt, [iden], [iden]);
+// while (i < 8) {
+//   const data = finalData[i - 1];
 
-const result = stringifyData(input3 || []);
+//   if (data.a) {
+//     let aText: string = data.a.substring(1);
+//     aText = aText.slice(0, -1);
 
-console.log(result);
+//     if (aText.charAt(aText.length - 1) === ")") {
+//       const resultA = test(aText, i);
+//       finalData.push(resultA);
+//     }
+//   }
+
+//   if (data.b) {
+//     let bText = data.b.substring(1);
+//     bText = bText.slice(0, -1);
+
+//     if (bText.charAt(bText.length - 1) === ")") {
+//       const resultB = test(bText, i);
+//       finalData.push(resultB);
+//     }
+//   }
+//   i++;
+// }
+
+const text = "pair(injl(comp(comp(iden)(injl(iden)))(injr(iden))))(injr(iden))";
+
+compiler(text);

@@ -1,4 +1,4 @@
-export const unit = (input?: any) => {
+const unit = (input?: any) => {
   // ilk eleman tag, diğer eleman(lar) data
   // bir array 2 elemanlıysa ya unit type idir ya da sum type idir
   // bir array 3 elemanlıysa product type idir
@@ -6,32 +6,46 @@ export const unit = (input?: any) => {
   return [0, 1];
 };
 
-export const iden = (input?: any) => {
+const iden = (input?: any) => {
   return input;
 };
 
-export const injl = (input: any, argument: any) => {
+const injl = (input: any, argument: any) => {
   return [1, argument(input)];
 };
 
-export const injr = (input: any, argument: any) => {
+const injr = (input: any, argument: any) => {
   return [2, argument(input)];
 };
 
-export const pair = (input: any, argument1: any, argument2: any) => {
-  let returnx = [0];
+const take = () => {
+  return [];
+};
 
-  if (argument1.length == 1) {
-    returnx.push(argument1[0](input));
-  } else if (argument1.length == 2) {
-    returnx.push(argument1[0](input, argument1[1]));
-  }
+const drop = () => {
+  return [];
+};
 
-  if (argument2.length == 1) {
-    returnx.push(argument2[0](input));
-  } else if (argument2.length == 2) {
-    returnx.push(argument2[0](input, argument2[1]));
-  }
+const comp = () => {
+  return [];
+};
 
-  return returnx;
+const pair = () => {
+  return [];
+};
+
+const case_ = () => {
+  return [];
+};
+
+export const core = {
+  unit,
+  iden,
+  injl,
+  injr,
+  take,
+  drop,
+  comp,
+  pair,
+  case_,
 };
