@@ -9,7 +9,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.test = exports.textConverter = void 0;
+exports.lineParser = exports.textConverter = void 0;
 var core_1 = require("./core");
 var helper_1 = require("./helper");
 var userCustomTerms = [];
@@ -56,7 +56,7 @@ var textConverter = function () {
     }
 };
 exports.textConverter = textConverter;
-var test = function (text, termIndex) {
+var lineParser = function (text, termIndex) {
     var _a;
     var parsedText = text.split("");
     var starts = [];
@@ -109,5 +109,5 @@ var test = function (text, termIndex) {
     }
     return result;
 };
-exports.test = test;
+exports.lineParser = lineParser;
 //# sourceMappingURL=textConverter.js.map

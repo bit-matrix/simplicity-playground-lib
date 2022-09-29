@@ -1,6 +1,7 @@
 "use strict";
 // import { iden, injl, injr, pair, unit } from "./core";
 Object.defineProperty(exports, "__esModule", { value: true });
+var coreb_1 = require("./coreb");
 var textConverter_1 = require("./textConverter");
 // let output = "";
 // export const stringifyData = (input: any[]) => {
@@ -40,15 +41,27 @@ var textConverter_1 = require("./textConverter");
 //   }
 //   return output;
 // };
-// const true_bit = injr(null, unit);
-// const false_bit = injl(null, unit);
-// const output_ = injr(false_bit, iden);
 // // const result = stringifyData(output_ || []);
 // console.log(result);
 // textConverter();
+var input = "4";
+var truebit = coreb_1.core.injr(coreb_1.core.iden(input));
+var falsebit = coreb_1.core.injl(coreb_1.core.iden(input));
+console.log("truebit", truebit);
+console.log("falsebit", falsebit);
+// const x = core.pair(truebit, falsebit);
+var z = coreb_1.core.injl(coreb_1.core.iden(coreb_1.core.iden(input)));
+var x = coreb_1.core.comp(coreb_1.core.injl(""), coreb_1.core.iden(input));
+console.log("x", x);
+// console.log(truebit);
+// console.log(falsebit);
+// const term = "injr(unit)";
+// const term2 = "injl(unit)";
+// const bs01 = core.pair(input, core.injl(null, core.unit), core.injr);
+// console.log(bs01);
 var compiler = function (text) {
     var finalData = [];
-    var result = (0, textConverter_1.test)(text, 0);
+    var result = (0, textConverter_1.lineParser)(text, 0);
     finalData.push(result);
     var recursive = function (inp) {
         var index = inp;
@@ -57,7 +70,7 @@ var compiler = function (text) {
             var aText = data.a.substring(1);
             aText = aText.slice(0, -1);
             if (aText.charAt(aText.length - 1) === ")") {
-                var resultA = (0, textConverter_1.test)(aText, index);
+                var resultA = (0, textConverter_1.lineParser)(aText, index);
                 finalData.push(resultA);
             }
         }
@@ -65,7 +78,7 @@ var compiler = function (text) {
             var bText = data.b.substring(1);
             bText = bText.slice(0, -1);
             if (bText.charAt(bText.length - 1) === ")") {
-                var resultB = (0, textConverter_1.test)(bText, index);
+                var resultB = (0, textConverter_1.lineParser)(bText, index);
                 finalData.push(resultB);
             }
         }
@@ -74,34 +87,10 @@ var compiler = function (text) {
             recursive(newIndex);
         }
         catch (_a) {
-            console.log("bitti");
+            console.log("end of recursive");
         }
     };
     recursive(1);
-    console.log(finalData);
     return finalData;
 };
-// let i = 1;
-// while (i < 8) {
-//   const data = finalData[i - 1];
-//   if (data.a) {
-//     let aText: string = data.a.substring(1);
-//     aText = aText.slice(0, -1);
-//     if (aText.charAt(aText.length - 1) === ")") {
-//       const resultA = test(aText, i);
-//       finalData.push(resultA);
-//     }
-//   }
-//   if (data.b) {
-//     let bText = data.b.substring(1);
-//     bText = bText.slice(0, -1);
-//     if (bText.charAt(bText.length - 1) === ")") {
-//       const resultB = test(bText, i);
-//       finalData.push(resultB);
-//     }
-//   }
-//   i++;
-// }
-var text = "pair(injl(comp(comp(iden)(injl(iden)))(injr(iden))))(injr(iden))";
-compiler(text);
 //# sourceMappingURL=index.js.map

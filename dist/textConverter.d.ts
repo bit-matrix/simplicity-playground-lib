@@ -1,2 +1,2 @@
 export declare const textConverter: () => void;
-export declare const test: (text: string, termIndex: number) => any;
+export declare const lineParser: (text: string, termIndex: number) => any;
