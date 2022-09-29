@@ -1,41 +1,53 @@
-const unit = (input?: any) => {
-  // ilk eleman tag, diğer eleman(lar) data
-  // bir array 2 elemanlıysa ya unit type idir ya da sum type idir
-  // bir array 3 elemanlıysa product type idir
+const unit = (a: any) => {
+  if (a) throw "A couldn't be empty";
 
-  return [0, 1];
+  return "<>";
 };
 
-const iden = (input?: any) => {
-  return input;
+const iden = (a: string) => {
+  return a;
 };
 
-const injl = (input: any, argument: any) => {
-  return [1, argument(input)];
+const injl = (a: string, term: any) => {
+  return "σL(" + term(a) + ")";
 };
 
-const injr = (input: any, argument: any) => {
-  return [2, argument(input)];
+const injr = (a: string, term: any) => {
+  return "σR(" + term(a) + ")";
 };
 
-const take = () => {
-  return [];
+const take = (a: string, b: string, term: any) => {
+  if (a) throw "a couldn't be empty";
+  if (b) throw "b couldn't be empty";
+
+  return term(a);
 };
 
-const drop = () => {
-  return [];
+const drop = (a: string, b: string, term: any) => {
+  if (a) throw "a couldn't be empty";
+  if (b) throw "b couldn't be empty";
+
+  return term(b);
 };
 
-const comp = () => {
-  return [];
+const comp = (a: string, term: any, term2: any) => {
+  return term2(term(a));
 };
 
-const pair = () => {
-  return [];
+const pair = (a: string, term: any, term2: any) => {
+  return "<" + term(a) + "," + term2(a) + ">";
 };
 
-const case_ = () => {
-  return [];
+("case (injr unit) (injl unit)");
+
+const case_ = (a: string, c: string, term: any, term2: any) => {
+  if (a.charAt(1) === "L") {
+    const input = a.slice(3, a.length - 1);
+    return term(input, c);
+  } else if (a.charAt(1) === "R") {
+    const input = a.slice(3, a.length - 1);
+    return term2(input, c);
+  }
 };
 
 export const core = {
