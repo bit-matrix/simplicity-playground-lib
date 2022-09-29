@@ -1,6 +1,6 @@
 // import { iden, injl, injr, pair, unit } from "./core";
 
-import { core } from "./core";
+import { core } from "./coreb";
 import { lineParser, textConverter } from "./textConverter";
 
 // let output = "";
@@ -47,16 +47,36 @@ import { lineParser, textConverter } from "./textConverter";
 //   return output;
 // };
 
-// const true_bit = injr(null, unit);
-// const false_bit = injl(null, unit);
-
-// const output_ = injr(false_bit, iden);
-
 // // const result = stringifyData(output_ || []);
 
 // console.log(result);
 
 // textConverter();
+
+const input = "4";
+const truebit = core.injr(core.iden(input));
+const falsebit = core.injl(core.iden(input));
+
+console.log("truebit", truebit);
+console.log("falsebit", falsebit);
+
+// const x = core.pair(truebit, falsebit);
+
+const z = core.injl(core.iden(core.iden(input)));
+
+const x = core.comp(core.injl(""), core.iden(input));
+
+console.log("x", x);
+
+// console.log(truebit);
+// console.log(falsebit);
+
+// const term = "injr(unit)";
+// const term2 = "injl(unit)";
+
+// const bs01 = core.pair(input, core.injl(null, core.unit), core.injr);
+
+// console.log(bs01);
 
 const compiler = (text: string) => {
   const finalData: any = [];
@@ -100,7 +120,3 @@ const compiler = (text: string) => {
 
   return finalData;
 };
-
-const testText = "pair(injl(comp(comp(iden)(injl(iden)))(injr(iden))))(injr(iden))";
-
-compiler(testText);
