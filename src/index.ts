@@ -59,27 +59,22 @@ import { test, textConverter } from "./textConverter";
 // textConverter();
 
 const compiler = (text: string) => {
-  const finalData = [];
+  const finalData: any = [];
+  let result = test(text, 0);
 
-  let i = 0;
-  let result = test(text, i);
   finalData.push(result);
 
-  const data = finalData[i];
-
-  const recursive = () => {
-    i++;
-    // let stop = false;
+  const recursive = (inp: number) => {
+    let index = inp;
+    const data = finalData[index - 1];
 
     if (data.a) {
       let aText: string = data.a.substring(1);
       aText = aText.slice(0, -1);
 
       if (aText.charAt(aText.length - 1) === ")") {
-        const resultA = test(aText, i);
+        const resultA = test(aText, index);
         finalData.push(resultA);
-      } else {
-        // stop = true;
       }
     }
 
@@ -88,20 +83,21 @@ const compiler = (text: string) => {
       bText = bText.slice(0, -1);
 
       if (bText.charAt(bText.length - 1) === ")") {
-        const resultB = test(bText, i);
+        const resultB = test(bText, index);
         finalData.push(resultB);
-      } else {
-        // stop = true;
       }
     }
 
-    // console.log(stop);
-    // recursive();
+    try {
+      const newIndex = (index += 1);
+      recursive(newIndex);
+    } catch {
+      console.log("bitti");
+    }
   };
 
-  recursive();
+  recursive(1);
 
-  console.log(finalData);
   return finalData;
 };
 
