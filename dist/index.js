@@ -48,39 +48,36 @@ var textConverter_1 = require("./textConverter");
 // textConverter();
 var compiler = function (text) {
     var finalData = [];
-    var i = 0;
-    var result = (0, textConverter_1.test)(text, i);
+    var result = (0, textConverter_1.test)(text, 0);
     finalData.push(result);
-    var data = finalData[i];
-    var recursive = function () {
-        i++;
-        // let stop = false;
+    var recursive = function (inp) {
+        var index = inp;
+        var data = finalData[index - 1];
         if (data.a) {
             var aText = data.a.substring(1);
             aText = aText.slice(0, -1);
             if (aText.charAt(aText.length - 1) === ")") {
-                var resultA = (0, textConverter_1.test)(aText, i);
+                var resultA = (0, textConverter_1.test)(aText, index);
                 finalData.push(resultA);
-            }
-            else {
-                // stop = true;
             }
         }
         if (data.b) {
             var bText = data.b.substring(1);
             bText = bText.slice(0, -1);
             if (bText.charAt(bText.length - 1) === ")") {
-                var resultB = (0, textConverter_1.test)(bText, i);
+                var resultB = (0, textConverter_1.test)(bText, index);
                 finalData.push(resultB);
             }
-            else {
-                // stop = true;
-            }
         }
-        // console.log(stop);
-        // recursive();
+        try {
+            var newIndex = (index += 1);
+            recursive(newIndex);
+        }
+        catch (_a) {
+            console.log("bitti");
+        }
     };
-    recursive();
+    recursive(1);
     console.log(finalData);
     return finalData;
 };
