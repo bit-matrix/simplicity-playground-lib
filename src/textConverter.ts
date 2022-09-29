@@ -55,7 +55,7 @@ export const textConverter = () => {
   }
 };
 
-export const test = (text: string, termIndex: number) => {
+export const lineParser = (text: string, termIndex: number) => {
   const parsedText = text.split("");
 
   let starts: number[] = [];

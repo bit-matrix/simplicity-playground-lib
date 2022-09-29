@@ -1,7 +1,7 @@
 // import { iden, injl, injr, pair, unit } from "./core";
 
 import { core } from "./core";
-import { test, textConverter } from "./textConverter";
+import { lineParser, textConverter } from "./textConverter";
 
 // let output = "";
 
@@ -60,7 +60,7 @@ import { test, textConverter } from "./textConverter";
 
 const compiler = (text: string) => {
   const finalData: any = [];
-  let result = test(text, 0);
+  let result = lineParser(text, 0);
 
   finalData.push(result);
 
@@ -73,7 +73,7 @@ const compiler = (text: string) => {
       aText = aText.slice(0, -1);
 
       if (aText.charAt(aText.length - 1) === ")") {
-        const resultA = test(aText, index);
+        const resultA = lineParser(aText, index);
         finalData.push(resultA);
       }
     }
@@ -83,7 +83,7 @@ const compiler = (text: string) => {
       bText = bText.slice(0, -1);
 
       if (bText.charAt(bText.length - 1) === ")") {
-        const resultB = test(bText, index);
+        const resultB = lineParser(bText, index);
         finalData.push(resultB);
       }
     }
@@ -92,7 +92,7 @@ const compiler = (text: string) => {
       const newIndex = (index += 1);
       recursive(newIndex);
     } catch {
-      console.log("bitti");
+      console.log("end of recursive");
     }
   };
 
@@ -101,33 +101,6 @@ const compiler = (text: string) => {
   return finalData;
 };
 
-// let i = 1;
+const testText = "pair(injl(comp(comp(iden)(injl(iden)))(injr(iden))))(injr(iden))";
 
-// while (i < 8) {
-//   const data = finalData[i - 1];
-
-//   if (data.a) {
-//     let aText: string = data.a.substring(1);
-//     aText = aText.slice(0, -1);
-
-//     if (aText.charAt(aText.length - 1) === ")") {
-//       const resultA = test(aText, i);
-//       finalData.push(resultA);
-//     }
-//   }
-
-//   if (data.b) {
-//     let bText = data.b.substring(1);
-//     bText = bText.slice(0, -1);
-
-//     if (bText.charAt(bText.length - 1) === ")") {
-//       const resultB = test(bText, i);
-//       finalData.push(resultB);
-//     }
-//   }
-//   i++;
-// }
-
-const text = "pair(injl(comp(comp(iden)(injl(iden)))(injr(iden))))(injr(iden))";
-
-compiler(text);
+compiler(testText);
