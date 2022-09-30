@@ -1,64 +1,8 @@
 "use strict";
-// import { iden, injl, injr, pair, unit } from "./core";
 Object.defineProperty(exports, "__esModule", { value: true });
 var coreb_1 = require("./coreb");
+var helper_1 = require("./helper");
 var textConverter_1 = require("./textConverter");
-// let output = "";
-// export const stringifyData = (input: any[]) => {
-//   const tag = input[0];
-//   if (tag == 0) {
-//   } else if (tag == 1) {
-//     output += "σL(";
-//   } else if (tag == 2) {
-//     output += "σR(";
-//   }
-//   if (input.length == 2) {
-//     if (input[1] == 1) {
-//       output += "<>";
-//     } else {
-//       stringifyData(input[1]);
-//     }
-//   } else {
-//     output += "<";
-//     if (input[1] == 1) {
-//       output += "<>";
-//     } else {
-//       stringifyData(input[1]);
-//     }
-//     output += ",";
-//     if (input[2] == 1) {
-//       output += "<>";
-//     } else {
-//       stringifyData(input[2]);
-//     }
-//     output += ">";
-//   }
-//   if (tag == 0) {
-//   } else if (tag == 1) {
-//     output += ")";
-//   } else if (tag == 2) {
-//     output += ")";
-//   }
-//   return output;
-// };
-// // const result = stringifyData(output_ || []);
-// console.log(result);
-// textConverter();
-var input = "4";
-var truebit = coreb_1.core.injr(coreb_1.core.iden(input));
-var falsebit = coreb_1.core.injl(coreb_1.core.iden(input));
-console.log("truebit", truebit);
-console.log("falsebit", falsebit);
-// const x = core.pair(truebit, falsebit);
-var z = coreb_1.core.injl(coreb_1.core.iden(coreb_1.core.iden(input)));
-var x = coreb_1.core.comp(coreb_1.core.injl(""), coreb_1.core.iden(input));
-console.log("x", x);
-// console.log(truebit);
-// console.log(falsebit);
-// const term = "injr(unit)";
-// const term2 = "injl(unit)";
-// const bs01 = core.pair(input, core.injl(null, core.unit), core.injr);
-// console.log(bs01);
 var compiler = function (text) {
     var finalData = [];
     var result = (0, textConverter_1.lineParser)(text, 0);
@@ -86,11 +30,64 @@ var compiler = function (text) {
             var newIndex = (index += 1);
             recursive(newIndex);
         }
-        catch (_a) {
-            console.log("end of recursive");
-        }
+        catch (_a) { }
     };
     recursive(1);
     return finalData;
 };
+var input = "1";
+var bs_01 = "pair(injl(comp(comp(iden)(injl(iden)))(injr(iden))))(injr(iden))";
+// const bs_01 = "pair(injl(unit))(injr(unit))";
+var result = compiler(bs_01);
+var run = function (input) {
+    var reversedData = result.sort(function (a, b) { return b.termIndex - a.termIndex; });
+    var leafCount = reversedData[0].termIndex;
+    var resultData = [];
+    console.log("reverseddata:", reversedData);
+    reversedData.forEach(function (data) {
+        if (data.termIndex === leafCount) {
+            if (data.a) {
+                var term = data.a.slice(1, -1);
+                var currentTerm_1 = (0, helper_1.termChecker)(term);
+                var funcResult = coreb_1.core[currentTerm_1](input, "", "", "");
+                resultData.push({ term: data.term, index: data.termIndex, a: funcResult });
+            }
+            if (data.b) {
+                var term = data.b.slice(1, -1);
+                var currentTerm_2 = (0, helper_1.termChecker)(term);
+                var funcResult = coreb_1.core[currentTerm_2](input, "", "", "");
+                resultData.push({ term: data.term, index: data.termIndex, b: funcResult });
+            }
+        }
+        else {
+            var previousData = resultData.filter(function (rd) {
+                return rd.index === data.termIndex + 1;
+            });
+            if (data.a) {
+                var term = data.a.slice(1, 5);
+                var currentTerm_3 = (0, helper_1.termChecker)(term);
+                var funcResult = coreb_1.core[currentTerm_3](previousData[0].a, "", "", "");
+                resultData.push({ term: data.term, index: data.termIndex, a: funcResult });
+            }
+            if (data.b) {
+                var term = data.b.slice(1, 5);
+                var currentTerm_4 = (0, helper_1.termChecker)(term);
+                var funcResult = coreb_1.core[currentTerm_4](previousData[1].a, "", "", "");
+                resultData.push({ term: data.term, index: data.termIndex, b: funcResult });
+            }
+        }
+    });
+    var finalStep = resultData.filter(function (rd) { return rd.index === 0; });
+    var finalTerm = finalStep[0].term;
+    var currentTerm = (0, helper_1.termChecker)(finalTerm);
+    var finalResult = "";
+    if (finalStep.length === 1) {
+        finalResult = coreb_1.core[currentTerm](finalStep[0].a, "", "", "");
+    }
+    if (finalStep.length === 2) {
+        finalResult = coreb_1.core[currentTerm](finalStep[0].a, finalStep[1].b, "", "");
+    }
+    console.log(finalResult);
+};
+run("1");
 //# sourceMappingURL=index.js.map
