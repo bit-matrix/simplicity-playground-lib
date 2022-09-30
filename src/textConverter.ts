@@ -111,17 +111,11 @@ export const lineParser = (text: string, termIndex: number) => {
     const b = final.find((f) => f.e === bigEnd)?.args;
 
     result = { term: termName, termIndex, a, b };
-    // const findRemovedB = ends.findIndex((en) => en === bigEnd);
-    // ends.splice(findRemovedB, 1);
-
-    // final.splice(0, 1);
-
-    // const findB = final.findIndex((fn) => fn.e === bigEnd);
-
-    // final.splice(findB, 1);
   } else if (arguementCount === 1) {
     const a = final[0].args;
     result = { term: termName, termIndex, a };
+  } else if (arguementCount === 0) {
+    result = { term: termName, termIndex };
   }
 
   return result;

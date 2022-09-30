@@ -51,5 +51,5 @@ export const core = {
   drop,
   comp,
   pair,
-  case_,
+  case: case_,
 };

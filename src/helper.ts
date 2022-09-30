@@ -17,7 +17,7 @@ export const termChecker = (termName: string) => {
     termName !== "take" &&
     termName !== "drop" &&
     termName !== "comp" &&
-    termName !== "case_" &&
+    termName !== "case" &&
     termName !== "pair"
   )
     throw "Invalid term name";
@@ -26,7 +26,7 @@ export const termChecker = (termName: string) => {
 };
 
 export const termArgumenetCount = (termName: string) => {
-  if (termName === "pair" || termName === "comp" || termName === "case_") {
+  if (termName === "pair" || termName === "comp" || termName === "case") {
     return 2;
   }
 

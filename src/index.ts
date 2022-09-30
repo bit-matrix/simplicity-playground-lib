@@ -1,6 +1,6 @@
 import { core } from "./coreb";
 import { termChecker } from "./helper";
-import { lineParser, textConverter } from "./textConverter";
+import { lineParser } from "./textConverter";
 
 const compiler = (text: string) => {
   const finalData: any = [];
@@ -33,8 +33,8 @@ const compiler = (text: string) => {
     }
 
     try {
-      const newIndex = (index += 1);
-      recursive(newIndex);
+      index++;
+      recursive(index);
     } catch {}
   };
 
@@ -43,19 +43,30 @@ const compiler = (text: string) => {
   return finalData;
 };
 
-const input = "1";
-
-const bs_01 = "pair(injl(comp(comp(iden)(injl(iden)))(injr(iden))))(injr(iden))";
-// const bs_01 = "pair(injl(unit))(injr(unit))";
+const bs_01 = "comp(pair(iden)(unit))(case(injr(unit))(injl(unit)))";
+// const bs_01 = "pair(injl(iden))(injr(iden))";
 
 const result: any[] = compiler(bs_01);
 
+console.log(result);
+
 const run = (input: string) => {
-  const reversedData = result.sort((a, b) => b.termIndex - a.termIndex);
+  let effect = false;
+  const customResult: any[] = result.map((res, index) => {
+    if (index > 0 && res.termIndex - result[index - 1].termIndex > 1) {
+      effect = true;
+      return { ...res, termIndex: res.termIndex - 1 };
+    } else {
+      if (effect) return { ...res, termIndex: res.termIndex - 1 };
+      return res;
+    }
+  });
+
+  const reversedData = customResult.sort((a, b) => b.termIndex - a.termIndex);
   const leafCount = reversedData[0].termIndex;
   const resultData: any = [];
 
-  console.log("reverseddata:", reversedData);
+  console.log("reversedData,", reversedData);
 
   reversedData.forEach((data) => {
     if (data.termIndex === leafCount) {
@@ -67,13 +78,13 @@ const run = (input: string) => {
         resultData.push({ term: data.term, index: data.termIndex, a: funcResult });
       }
 
-      if (data.b) {
-        const term = data.b.slice(1, -1);
-        const currentTerm = termChecker(term);
-        const funcResult = core[currentTerm](input, "", "", "");
+      // if (data.b) {
+      //   const term = data.b.slice(1, -1);
+      //   const currentTerm = termChecker(term);
+      //   const funcResult = core[currentTerm](input, "", "", "");
 
-        resultData.push({ term: data.term, index: data.termIndex, b: funcResult });
-      }
+      //   resultData.push({ term: data.term, index: data.termIndex, b: funcResult });
+      // }
     } else {
       const previousData = resultData.filter((rd: any) => {
         return rd.index === data.termIndex + 1;
@@ -81,10 +92,12 @@ const run = (input: string) => {
 
       if (data.a) {
         const term = data.a.slice(1, 5);
-
         const currentTerm = termChecker(term);
+        let newInput = previousData[0].a;
 
-        const funcResult = core[currentTerm](previousData[0].a, "", "", "");
+        if (previousData.length === 1 && term !== previousData[0].term) newInput = input;
+
+        const funcResult = core[currentTerm](newInput, "", "", "");
 
         resultData.push({ term: data.term, index: data.termIndex, a: funcResult });
       }
@@ -92,7 +105,21 @@ const run = (input: string) => {
       if (data.b) {
         const term = data.b.slice(1, 5);
         const currentTerm = termChecker(term);
-        const funcResult = core[currentTerm](previousData[1].a, "", "", "");
+
+        let newInput = input;
+
+        console.log(currentTerm);
+        console.log(previousData);
+
+        if (previousData.length === 1 && term === previousData[0].term) {
+          newInput = previousData[0].a;
+        }
+
+        if (previousData.length === 2 && term === previousData[1].term) {
+          previousData[1].b ? (newInput = previousData[1].b) : (newInput = previousData[1].a);
+        }
+
+        const funcResult = core[currentTerm](newInput, "", "", "");
 
         resultData.push({ term: data.term, index: data.termIndex, b: funcResult });
       }
@@ -116,4 +143,4 @@ const run = (input: string) => {
   console.log(finalResult);
 };
 
-run("1");
+run("[not]σR(<>)");

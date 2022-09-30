@@ -27,8 +27,8 @@ const drop = (termA: string, termB: string) => {
   return termB;
 };
 
-const comp = (a: string, term: any) => {
-  return term(a);
+const comp = (term: any) => {
+  return term;
 };
 
 const pair = (termA: any, termB: any) => {
@@ -52,5 +52,5 @@ export const core = {
   drop,
   comp,
   pair,
-  case_,
+  case: case_,
 };
