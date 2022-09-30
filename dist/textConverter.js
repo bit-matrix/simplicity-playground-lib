@@ -97,15 +97,13 @@ var lineParser = function (text, termIndex) {
         var bigEnd_1 = ends.sort(function (a, b) { return b - a; })[0];
         var b = (_a = final.find(function (f) { return f.e === bigEnd_1; })) === null || _a === void 0 ? void 0 : _a.args;
         result = { term: termName, termIndex: termIndex, a: a, b: b };
-        // const findRemovedB = ends.findIndex((en) => en === bigEnd);
-        // ends.splice(findRemovedB, 1);
-        // final.splice(0, 1);
-        // const findB = final.findIndex((fn) => fn.e === bigEnd);
-        // final.splice(findB, 1);
     }
     else if (arguementCount === 1) {
         var a = final[0].args;
         result = { term: termName, termIndex: termIndex, a: a };
+    }
+    else if (arguementCount === 0) {
+        result = { term: termName, termIndex: termIndex };
     }
     return result;
 };

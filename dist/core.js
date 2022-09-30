@@ -46,6 +46,6 @@ exports.core = {
     drop: drop,
     comp: comp,
     pair: pair,
-    case_: case_,
+    case: case_,
 };
 //# sourceMappingURL=core.js.map

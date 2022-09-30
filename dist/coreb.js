@@ -25,8 +25,8 @@ var drop = function (termA, termB) {
         throw "A couldn't be empty";
     return termB;
 };
-var comp = function (a, term) {
-    return term(a);
+var comp = function (term) {
+    return term;
 };
 var pair = function (termA, termB) {
     return "<" + termA + "," + termB + ">";
@@ -48,6 +48,6 @@ exports.core = {
     drop: drop,
     comp: comp,
     pair: pair,
-    case_: case_,
+    case: case_,
 };
 //# sourceMappingURL=coreb.js.map

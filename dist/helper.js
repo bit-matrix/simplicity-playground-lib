@@ -19,14 +19,14 @@ var termChecker = function (termName) {
         termName !== "take" &&
         termName !== "drop" &&
         termName !== "comp" &&
-        termName !== "case_" &&
+        termName !== "case" &&
         termName !== "pair")
         throw "Invalid term name";
     return termName;
 };
 exports.termChecker = termChecker;
 var termArgumenetCount = function (termName) {
-    if (termName === "pair" || termName === "comp" || termName === "case_") {
+    if (termName === "pair" || termName === "comp" || termName === "case") {
         return 2;
     }
     if (termName === "unit" || termName === "iden") {

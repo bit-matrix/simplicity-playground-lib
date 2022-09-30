@@ -5,7 +5,7 @@ export declare const core: {
     injr: (term: string) => string;
     take: (termA: string, termB: string) => string;
     drop: (termA: string, termB: string) => string;
-    comp: (a: string, term: any) => any;
+    comp: (term: any) => any;
     pair: (termA: any, termB: any) => string;
-    case_: (a: string, c: string, termA: any, termB: any) => any;
+    case: (a: string, c: string, termA: any, termB: any) => any;
 };

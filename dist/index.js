@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var coreb_1 = require("./coreb");
 var helper_1 = require("./helper");
@@ -27,23 +38,35 @@ var compiler = function (text) {
             }
         }
         try {
-            var newIndex = (index += 1);
-            recursive(newIndex);
+            index++;
+            recursive(index);
         }
         catch (_a) { }
     };
     recursive(1);
     return finalData;
 };
-var input = "1";
-var bs_01 = "pair(injl(comp(comp(iden)(injl(iden)))(injr(iden))))(injr(iden))";
-// const bs_01 = "pair(injl(unit))(injr(unit))";
+var bs_01 = "comp(pair(iden)(unit))(case(injr(unit))(injl(unit)))";
+// const bs_01 = "pair(injl(iden))(injr(iden))";
 var result = compiler(bs_01);
+console.log(result);
 var run = function (input) {
-    var reversedData = result.sort(function (a, b) { return b.termIndex - a.termIndex; });
+    var effect = false;
+    var customResult = result.map(function (res, index) {
+        if (index > 0 && res.termIndex - result[index - 1].termIndex > 1) {
+            effect = true;
+            return __assign(__assign({}, res), { termIndex: res.termIndex - 1 });
+        }
+        else {
+            if (effect)
+                return __assign(__assign({}, res), { termIndex: res.termIndex - 1 });
+            return res;
+        }
+    });
+    var reversedData = customResult.sort(function (a, b) { return b.termIndex - a.termIndex; });
     var leafCount = reversedData[0].termIndex;
     var resultData = [];
-    console.log("reverseddata:", reversedData);
+    console.log("reversedData,", reversedData);
     reversedData.forEach(function (data) {
         if (data.termIndex === leafCount) {
             if (data.a) {
@@ -52,12 +75,12 @@ var run = function (input) {
                 var funcResult = coreb_1.core[currentTerm_1](input, "", "", "");
                 resultData.push({ term: data.term, index: data.termIndex, a: funcResult });
             }
-            if (data.b) {
-                var term = data.b.slice(1, -1);
-                var currentTerm_2 = (0, helper_1.termChecker)(term);
-                var funcResult = coreb_1.core[currentTerm_2](input, "", "", "");
-                resultData.push({ term: data.term, index: data.termIndex, b: funcResult });
-            }
+            // if (data.b) {
+            //   const term = data.b.slice(1, -1);
+            //   const currentTerm = termChecker(term);
+            //   const funcResult = core[currentTerm](input, "", "", "");
+            //   resultData.push({ term: data.term, index: data.termIndex, b: funcResult });
+            // }
         }
         else {
             var previousData = resultData.filter(function (rd) {
@@ -65,14 +88,26 @@ var run = function (input) {
             });
             if (data.a) {
                 var term = data.a.slice(1, 5);
-                var currentTerm_3 = (0, helper_1.termChecker)(term);
-                var funcResult = coreb_1.core[currentTerm_3](previousData[0].a, "", "", "");
+                var currentTerm_2 = (0, helper_1.termChecker)(term);
+                var newInput = previousData[0].a;
+                if (previousData.length === 1 && term !== previousData[0].term)
+                    newInput = input;
+                var funcResult = coreb_1.core[currentTerm_2](newInput, "", "", "");
                 resultData.push({ term: data.term, index: data.termIndex, a: funcResult });
             }
             if (data.b) {
                 var term = data.b.slice(1, 5);
-                var currentTerm_4 = (0, helper_1.termChecker)(term);
-                var funcResult = coreb_1.core[currentTerm_4](previousData[1].a, "", "", "");
+                var currentTerm_3 = (0, helper_1.termChecker)(term);
+                var newInput = input;
+                console.log(currentTerm_3);
+                console.log(previousData);
+                if (previousData.length === 1 && term === previousData[0].term) {
+                    newInput = previousData[0].a;
+                }
+                if (previousData.length === 2 && term === previousData[1].term) {
+                    previousData[1].b ? (newInput = previousData[1].b) : (newInput = previousData[1].a);
+                }
+                var funcResult = coreb_1.core[currentTerm_3](newInput, "", "", "");
                 resultData.push({ term: data.term, index: data.termIndex, b: funcResult });
             }
         }
@@ -89,5 +124,5 @@ var run = function (input) {
     }
     console.log(finalResult);
 };
-run("1");
+run("[not]σR(<>)");
 //# sourceMappingURL=index.js.map
