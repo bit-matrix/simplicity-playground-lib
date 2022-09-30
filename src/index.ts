@@ -1,82 +1,6 @@
-// import { iden, injl, injr, pair, unit } from "./core";
-
 import { core } from "./coreb";
+import { termChecker } from "./helper";
 import { lineParser, textConverter } from "./textConverter";
-
-// let output = "";
-
-// export const stringifyData = (input: any[]) => {
-//   const tag = input[0];
-
-//   if (tag == 0) {
-//   } else if (tag == 1) {
-//     output += "σL(";
-//   } else if (tag == 2) {
-//     output += "σR(";
-//   }
-
-//   if (input.length == 2) {
-//     if (input[1] == 1) {
-//       output += "<>";
-//     } else {
-//       stringifyData(input[1]);
-//     }
-//   } else {
-//     output += "<";
-//     if (input[1] == 1) {
-//       output += "<>";
-//     } else {
-//       stringifyData(input[1]);
-//     }
-//     output += ",";
-//     if (input[2] == 1) {
-//       output += "<>";
-//     } else {
-//       stringifyData(input[2]);
-//     }
-//     output += ">";
-//   }
-
-//   if (tag == 0) {
-//   } else if (tag == 1) {
-//     output += ")";
-//   } else if (tag == 2) {
-//     output += ")";
-//   }
-
-//   return output;
-// };
-
-// // const result = stringifyData(output_ || []);
-
-// console.log(result);
-
-// textConverter();
-
-const input = "4";
-const truebit = core.injr(core.iden(input));
-const falsebit = core.injl(core.iden(input));
-
-console.log("truebit", truebit);
-console.log("falsebit", falsebit);
-
-// const x = core.pair(truebit, falsebit);
-
-const z = core.injl(core.iden(core.iden(input)));
-
-const x = core.comp(core.injl(""), core.iden(input));
-
-console.log("x", x);
-
-// console.log(truebit);
-// console.log(falsebit);
-
-// const term = "injr(unit)";
-// const term2 = "injl(unit)";
-
-// const bs01 = core.pair(input, core.injl(null, core.unit), core.injr);
-
-// console.log(bs01);
 
 const compiler = (text: string) => {
   const finalData: any = [];
@@ -111,12 +35,85 @@ const compiler = (text: string) => {
     try {
       const newIndex = (index += 1);
       recursive(newIndex);
-    } catch {
-      console.log("end of recursive");
-    }
+    } catch {}
   };
 
   recursive(1);
 
   return finalData;
 };
+
+const input = "1";
+
+const bs_01 = "pair(injl(comp(comp(iden)(injl(iden)))(injr(iden))))(injr(iden))";
+// const bs_01 = "pair(injl(unit))(injr(unit))";
+
+const result: any[] = compiler(bs_01);
+
+const run = (input: string) => {
+  const reversedData = result.sort((a, b) => b.termIndex - a.termIndex);
+  const leafCount = reversedData[0].termIndex;
+  const resultData: any = [];
+
+  console.log("reverseddata:", reversedData);
+
+  reversedData.forEach((data) => {
+    if (data.termIndex === leafCount) {
+      if (data.a) {
+        const term = data.a.slice(1, -1);
+        const currentTerm = termChecker(term);
+        const funcResult = core[currentTerm](input, "", "", "");
+
+        resultData.push({ term: data.term, index: data.termIndex, a: funcResult });
+      }
+
+      if (data.b) {
+        const term = data.b.slice(1, -1);
+        const currentTerm = termChecker(term);
+        const funcResult = core[currentTerm](input, "", "", "");
+
+        resultData.push({ term: data.term, index: data.termIndex, b: funcResult });
+      }
+    } else {
+      const previousData = resultData.filter((rd: any) => {
+        return rd.index === data.termIndex + 1;
+      });
+
+      if (data.a) {
+        const term = data.a.slice(1, 5);
+
+        const currentTerm = termChecker(term);
+
+        const funcResult = core[currentTerm](previousData[0].a, "", "", "");
+
+        resultData.push({ term: data.term, index: data.termIndex, a: funcResult });
+      }
+
+      if (data.b) {
+        const term = data.b.slice(1, 5);
+        const currentTerm = termChecker(term);
+        const funcResult = core[currentTerm](previousData[1].a, "", "", "");
+
+        resultData.push({ term: data.term, index: data.termIndex, b: funcResult });
+      }
+    }
+  });
+
+  const finalStep = resultData.filter((rd: any) => rd.index === 0);
+
+  const finalTerm = finalStep[0].term;
+  const currentTerm = termChecker(finalTerm);
+  let finalResult = "";
+
+  if (finalStep.length === 1) {
+    finalResult = core[currentTerm](finalStep[0].a, "", "", "");
+  }
+
+  if (finalStep.length === 2) {
+    finalResult = core[currentTerm](finalStep[0].a, finalStep[1].b, "", "");
+  }
+
+  console.log(finalResult);
+};
+
+run("1");
