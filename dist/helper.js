@@ -32,6 +32,7 @@ var termArgumenetCount = function (termName) {
     if (termName === "unit" || termName === "iden") {
         return 0;
     }
+    // injl , injr , take , drop
     return 1;
 };
 exports.termArgumenetCount = termArgumenetCount;

@@ -9,11 +9,11 @@ var unit = function (a) {
 var iden = function (a) {
     return a;
 };
-var injl = function (term) {
-    return "σL(" + term + ")";
+var injl = function (a) {
+    return "σL(" + a + ")";
 };
-var injr = function (term) {
-    return "σR(" + term + ")";
+var injr = function (a) {
+    return "σR(" + a + ")";
 };
 var take = function (termA, termB) {
     if (!termB)
@@ -31,11 +31,11 @@ var comp = function (term) {
 var pair = function (termA, termB) {
     return "<" + termA + "," + termB + ">";
 };
-var case_ = function (a, c, termA, termB) {
-    if (a.charAt(1) === "L") {
+var case_ = function (a, termA, termB) {
+    if (a.charAt(2) === "L") {
         return termA;
     }
-    else if (a.charAt(1) === "R") {
+    else if (a.charAt(2) === "R") {
         return termB;
     }
 };
