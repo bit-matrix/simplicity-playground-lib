@@ -23,8 +23,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var coreb_1 = require("./coreb");
 var helper_1 = require("./helper");
 var textConverter_1 = require("./textConverter");
-var input = "σR(<>)";
-var not = "comp(pair(iden)(unit))(case(injr(unit))(injl(unit)))";
+var input = "<>";
+var true_bit = "injr(unit)";
+var false_bit = "injl(unit)";
+// const not = "pair(injr(unit))(injl(unit))";
+// const not = "pair(injr(unit))(injl(unit))";
+var not = "pair(injl(comp(comp(iden)(injl(iden)))(injr(iden))))(injr(iden))";
 var compiler = function (text) {
     var finalData = [];
     var result = (0, textConverter_1.lineParser)(text, 0);
@@ -68,6 +72,7 @@ var compiler = function (text) {
                 var currentTerm2 = (0, helper_1.termChecker)(term2);
                 var funcResult1 = coreb_1.core[currentTerm1](manipulatedInput, "", "");
                 var funcResult2 = coreb_1.core[currentTerm2](manipulatedInput, "", "");
+                console.log("currentTerm0", currentTerm0);
                 var final = coreb_1.core[currentTerm0](funcResult1, funcResult2, "");
                 var findMainIndex = newFinalData.findIndex(function (nfw) { return nfw.termIndex === data.termIndex - 1; });
                 var previousData = newFinalData[findMainIndex];
@@ -97,7 +102,13 @@ var compiler = function (text) {
                     var willExecData = newFinalData[inp - 3];
                     var execTerm = willExecData.term;
                     var execTermCurrent = (0, helper_1.termChecker)(execTerm);
-                    var finalResult = coreb_1.core[execTermCurrent](manipulatedInput, willExecData.a, willExecData.b);
+                    var finalResult = "";
+                    if (execTermCurrent === "case") {
+                        finalResult = coreb_1.core[execTermCurrent](manipulatedInput, willExecData.a, willExecData.b);
+                    }
+                    else {
+                        finalResult = coreb_1.core[execTermCurrent](willExecData.a, willExecData.b);
+                    }
                     newFinalData[inp - 3] = __assign(__assign({}, newFinalData[inp - 3]), { exec: finalResult });
                 }
                 newFinalData[inp - 1] = __assign(__assign({}, newFinalData[inp - 1]), { exec: final });
@@ -111,9 +122,10 @@ var compiler = function (text) {
             index++;
             recursive(index);
         }
-        catch (_a) { }
+        catch (err) { }
     };
     recursive(1);
+    console.log("finalData", finalData);
     var program = finalData[0];
     var s;
     var t;
@@ -124,6 +136,9 @@ var compiler = function (text) {
         t = finalData[2];
     }
     var currentTerm = (0, helper_1.termChecker)(program.term);
+    if (program.exec) {
+        return program.exec;
+    }
     if (currentTerm === "comp") {
         return t.exec;
     }
