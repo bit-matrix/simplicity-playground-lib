@@ -6,9 +6,21 @@ const input = "<>";
 
 const true_bit = "injr(unit)";
 const false_bit = "injl(unit)";
-// const not = "pair(injr(unit))(injl(unit))";
 
-const not = "pair(injl(comp(comp(iden)(injl(iden)))(injr(iden))))(injr(iden))";
+//01000001
+
+const bs_01 = "pair(" + false_bit + ")" + "(" + true_bit + ")";
+const bs_00 = "pair(" + false_bit + ")" + "(" + false_bit + ")";
+const bs_10 = "pair(" + true_bit + ")" + "(" + false_bit + ")";
+const bs_11 = "pair(" + true_bit + ")" + "(" + true_bit + ")";
+
+const bs_0100 = "pair(" + bs_01 + ")" + "(" + bs_00 + ")";
+
+// bs-01 := pair(false-bit)(true-bit)
+// bs-00 := pair(false-bit)(false-bit)
+// bs-10 := pair(true-bit)(false-bit)
+// bs-11 := pair(true-bit)(true-bit)
+// bs-0100 := pair(bs-01)(bs-00)
 
 const compiler = (text: string) => {
   let finalData: any = [];
@@ -148,10 +160,14 @@ const compiler = (text: string) => {
     return t.exec;
   }
 
+  if (currentTerm === "pair") {
+    return core.pair(s.exec, t.exec);
+  }
+
   return s.exec;
 };
 
-const res = compiler(not);
+const res = compiler(bs_0100);
 
 console.log(res);
 
