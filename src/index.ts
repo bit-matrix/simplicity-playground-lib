@@ -1,8 +1,10 @@
 import { core } from "./coreb";
-import { termArgumenetCount, termChecker } from "./helper";
+import { termChecker } from "./helper";
 import { lineParser } from "./textConverter";
 
-const input = "σL(<>)";
+const input = "σR(<>)";
+
+const not = "comp(pair(iden)(unit))(case(injr(unit))(injl(unit)))";
 
 const compiler = (text: string) => {
   let finalData: any = [];
@@ -54,10 +56,10 @@ const compiler = (text: string) => {
         const currentTerm1 = termChecker(term1);
         const currentTerm2 = termChecker(term2);
 
-        const funcResult1 = core[currentTerm1](manipulatedInput, "");
-        const funcResult2 = core[currentTerm2](manipulatedInput, "");
+        const funcResult1 = core[currentTerm1](manipulatedInput, "", "");
+        const funcResult2 = core[currentTerm2](manipulatedInput, "", "");
 
-        const final = core[currentTerm0](funcResult1, funcResult2);
+        const final = core[currentTerm0](funcResult1, funcResult2, "");
         const findMainIndex = newFinalData.findIndex((nfw) => nfw.termIndex === data.termIndex - 1);
         const previousData = newFinalData[findMainIndex];
         // const previousDataA = previousData.a.startsWith("(" + currentTerm0);
@@ -78,13 +80,20 @@ const compiler = (text: string) => {
         const term1 = data.a.slice(1, -1);
         const currentTerm0 = termChecker(term0);
         const currentTerm1 = termChecker(term1);
-        const funcResult1 = core[currentTerm1](manipulatedInput, "");
-        const final = core[currentTerm0](funcResult1, "");
+        const funcResult1 = core[currentTerm1](manipulatedInput, "", "");
+        const final = core[currentTerm0](funcResult1, "", "");
 
         if (!newFinalData[inp - 2].exec) {
           newFinalData[inp - 2] = { ...newFinalData[inp - 2], a: final };
         } else {
           newFinalData[inp - 3] = { ...newFinalData[inp - 3], b: final };
+
+          const willExecData = newFinalData[inp - 3];
+          const execTerm = willExecData.term;
+          const execTermCurrent = termChecker(execTerm);
+
+          const finalResult = core[execTermCurrent](manipulatedInput, willExecData.a, willExecData.b);
+          newFinalData[inp - 3] = { ...newFinalData[inp - 3], exec: finalResult };
         }
 
         newFinalData[inp - 1] = { ...newFinalData[inp - 1], exec: final };
@@ -101,87 +110,108 @@ const compiler = (text: string) => {
       recursive(index);
     } catch {}
   };
+
   recursive(1);
 
-  return finalData;
+  const program = finalData[0];
+  let s: any;
+  let t: any;
+
+  if (program.a) {
+    s = finalData[1];
+  }
+
+  if (program.b) {
+    t = finalData[2];
+  }
+
+  const currentTerm = termChecker(program.term);
+
+  if (currentTerm === "comp") {
+    return t.exec;
+  }
+
+  return s.exec;
 };
+
+const res = compiler(not);
+
+console.log(res);
 
 // const not = "pair(injl(comp(comp(iden)(injl(iden)))(injr(iden))))(injr(iden))";
 
-const not = "comp(pair(iden)(unit))(case(injr(unit))(injl(unit)))";
+// const result: any[] = compiler(not);
 
-const result: any[] = compiler(not);
+// console.log(result);
 
-console.log(result);
+// let effect = false;
 
-let effect = false;
+// const runProgram = () => {
+//   const customResult: any[] = result.map((res, index) => {
+//     if (index > 0 && res.termIndex - result[index - 1].termIndex > 1) {
+//       effect = true;
+//       return { ...res, termIndex: res.termIndex - 1 };
+//     } else {
+//       if (effect) return { ...res, termIndex: res.termIndex - 1 };
+//       return res;
+//     }
+//   });
 
-const runProgram = () => {
-  const customResult: any[] = result.map((res, index) => {
-    if (index > 0 && res.termIndex - result[index - 1].termIndex > 1) {
-      effect = true;
-      return { ...res, termIndex: res.termIndex - 1 };
-    } else {
-      if (effect) return { ...res, termIndex: res.termIndex - 1 };
-      return res;
-    }
-  });
+//   const programTreeLength = customResult[customResult.length - 1].termIndex;
+//   const program = customResult[0];
+//   let termMemory: any = [];
+//   let termIndex = 1;
 
-  const programTreeLength = customResult[customResult.length - 1].termIndex;
-  const program = customResult[0];
-  let termMemory: any = [];
-  let termIndex = 1;
+//   while (termIndex <= programTreeLength) {
+//     const siblings = customResult.filter((value) => value.termIndex === termIndex);
 
-  while (termIndex <= programTreeLength) {
-    const siblings = customResult.filter((value) => value.termIndex === termIndex);
+//     if (termIndex === 1) {
+//       termMemory.push({ main: program, programIndex: 0, siblings });
+//     } else {
+//       const previousData = termMemory[termIndex - 2];
+//       if (siblings.length === 2) {
+//         termMemory.push({ main: previousData.siblings[previousData.siblings.length - 1], programIndex: 1, siblings });
+//       } else {
+//         termMemory.push({ main: previousData.siblings[previousData.siblings.length - 2], programIndex: 0, siblings });
+//       }
+//     }
+//     termIndex++;
+//   }
 
-    if (termIndex === 1) {
-      termMemory.push({ main: program, programIndex: 0, siblings });
-    } else {
-      const previousData = termMemory[termIndex - 2];
-      if (siblings.length === 2) {
-        termMemory.push({ main: previousData.siblings[previousData.siblings.length - 1], programIndex: 1, siblings });
-      } else {
-        termMemory.push({ main: previousData.siblings[previousData.siblings.length - 2], programIndex: 0, siblings });
-      }
-    }
-    termIndex++;
-  }
+//   let programResult: any = [];
 
-  let programResult: any = [];
+// console.log(termMemory);
 
-  // console.log(termMemory);
+// termMemory.forEach((tm: any, index: number) => {
+//   if (tm.main.term === "comp") {
+//     const s = tm.siblings[0];
+//     const t = tm.siblings[1];
 
-  // termMemory.forEach((tm: any, index: number) => {
-  //   if (tm.main.term === "comp") {
-  //     const s = tm.siblings[0];
-  //     const t = tm.siblings[1];
+//     if (termMemory[index + 1].programIndex !== 0) {
+//       const term0 = s.term;
+//       const term1 = s.a.slice(1, -1);
+//       const term2 = s.b.slice(1, -1);
 
-  //     if (termMemory[index + 1].programIndex !== 0) {
-  //       const term0 = s.term;
-  //       const term1 = s.a.slice(1, -1);
-  //       const term2 = s.b.slice(1, -1);
+//       const currentTerm0 = termChecker(term0);
+//       const currentTerm1 = termChecker(term1);
+//       const currentTerm2 = termChecker(term2);
 
-  //       const currentTerm0 = termChecker(term0);
-  //       const currentTerm1 = termChecker(term1);
-  //       const currentTerm2 = termChecker(term2);
+//       const funcResult1 = core[currentTerm1](input, "");
+//       const funcResult2 = core[currentTerm2](input, "");
 
-  //       const funcResult1 = core[currentTerm1](input, "");
-  //       const funcResult2 = core[currentTerm2](input, "");
+//       const final = core[currentTerm0](funcResult1, funcResult2);
 
-  //       const final = core[currentTerm0](funcResult1, funcResult2);
+//       programResult.push({ main: { ...tm.main, a: final } });
+//     } else {
+//       console.log(tm);
+//     }
+//   }
+// });
 
-  //       programResult.push({ main: { ...tm.main, a: final } });
-  //     } else {
-  //       console.log(tm);
-  //     }
-  //   }
-  // });
+// console.log(programResult);
+// };
 
-  // console.log(programResult);
-};
-
-runProgram();
+// runProgram();
 
 // const run = (input: string) => {
 //   let effect = false;

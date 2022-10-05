@@ -35,12 +35,14 @@ const pair = (termA: any, termB: any) => {
   return "<" + termA + "," + termB + ">";
 };
 
-const case_ = (a: string, termA: any, termB?: any) => {
+const case_ = (a: string, termA: any, termB: any) => {
   if (a.charAt(2) === "L") {
     return termA;
   } else if (a.charAt(2) === "R") {
     return termB;
   }
+
+  return "";
 };
 
 export const core = {
