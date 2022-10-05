@@ -2,9 +2,13 @@ import { core } from "./coreb";
 import { termChecker } from "./helper";
 import { lineParser } from "./textConverter";
 
-const input = "σR(<>)";
+const input = "<>";
 
-const not = "comp(pair(iden)(unit))(case(injr(unit))(injl(unit)))";
+const true_bit = "injr(unit)";
+const false_bit = "injl(unit)";
+// const not = "pair(injr(unit))(injl(unit))";
+
+const not = "pair(injl(comp(comp(iden)(injl(iden)))(injr(iden))))(injr(iden))";
 
 const compiler = (text: string) => {
   let finalData: any = [];
@@ -91,12 +95,19 @@ const compiler = (text: string) => {
           const willExecData = newFinalData[inp - 3];
           const execTerm = willExecData.term;
           const execTermCurrent = termChecker(execTerm);
+          let finalResult = "";
 
-          const finalResult = core[execTermCurrent](manipulatedInput, willExecData.a, willExecData.b);
+          if (execTermCurrent === "case") {
+            finalResult = core[execTermCurrent](manipulatedInput, willExecData.a, willExecData.b);
+          } else {
+            finalResult = core[execTermCurrent](willExecData.a, willExecData.b);
+          }
+
           newFinalData[inp - 3] = { ...newFinalData[inp - 3], exec: finalResult };
         }
 
         newFinalData[inp - 1] = { ...newFinalData[inp - 1], exec: final };
+
         if (newFinalData[inp - 2].term && newFinalData[inp - 2].term === "comp") {
           manipulatedInput = final;
         }
@@ -108,10 +119,12 @@ const compiler = (text: string) => {
     try {
       index++;
       recursive(index);
-    } catch {}
+    } catch (err) {}
   };
 
   recursive(1);
+
+  console.log("finalData", finalData);
 
   const program = finalData[0];
   let s: any;
@@ -126,6 +139,10 @@ const compiler = (text: string) => {
   }
 
   const currentTerm = termChecker(program.term);
+
+  if (program.exec) {
+    return program.exec;
+  }
 
   if (currentTerm === "comp") {
     return t.exec;
