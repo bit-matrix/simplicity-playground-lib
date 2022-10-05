@@ -38,6 +38,7 @@ var case_ = function (a, termA, termB) {
     else if (a.charAt(2) === "R") {
         return termB;
     }
+    return "";
 };
 exports.core = {
     unit: unit,

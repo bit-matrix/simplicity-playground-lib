@@ -23,7 +23,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var coreb_1 = require("./coreb");
 var helper_1 = require("./helper");
 var textConverter_1 = require("./textConverter");
-var input = "σL(<>)";
+var input = "σR(<>)";
+var not = "comp(pair(iden)(unit))(case(injr(unit))(injl(unit)))";
 var compiler = function (text) {
     var finalData = [];
     var result = (0, textConverter_1.lineParser)(text, 0);
@@ -65,9 +66,9 @@ var compiler = function (text) {
                 var currentTerm0 = (0, helper_1.termChecker)(term0);
                 var currentTerm1 = (0, helper_1.termChecker)(term1);
                 var currentTerm2 = (0, helper_1.termChecker)(term2);
-                var funcResult1 = coreb_1.core[currentTerm1](manipulatedInput, "");
-                var funcResult2 = coreb_1.core[currentTerm2](manipulatedInput, "");
-                var final = coreb_1.core[currentTerm0](funcResult1, funcResult2);
+                var funcResult1 = coreb_1.core[currentTerm1](manipulatedInput, "", "");
+                var funcResult2 = coreb_1.core[currentTerm2](manipulatedInput, "", "");
+                var final = coreb_1.core[currentTerm0](funcResult1, funcResult2, "");
                 var findMainIndex = newFinalData.findIndex(function (nfw) { return nfw.termIndex === data.termIndex - 1; });
                 var previousData = newFinalData[findMainIndex];
                 // const previousDataA = previousData.a.startsWith("(" + currentTerm0);
@@ -86,13 +87,18 @@ var compiler = function (text) {
                 var term1 = data.a.slice(1, -1);
                 var currentTerm0 = (0, helper_1.termChecker)(term0);
                 var currentTerm1 = (0, helper_1.termChecker)(term1);
-                var funcResult1 = coreb_1.core[currentTerm1](manipulatedInput, "");
-                var final = coreb_1.core[currentTerm0](funcResult1, "");
+                var funcResult1 = coreb_1.core[currentTerm1](manipulatedInput, "", "");
+                var final = coreb_1.core[currentTerm0](funcResult1, "", "");
                 if (!newFinalData[inp - 2].exec) {
                     newFinalData[inp - 2] = __assign(__assign({}, newFinalData[inp - 2]), { a: final });
                 }
                 else {
                     newFinalData[inp - 3] = __assign(__assign({}, newFinalData[inp - 3]), { b: final });
+                    var willExecData = newFinalData[inp - 3];
+                    var execTerm = willExecData.term;
+                    var execTermCurrent = (0, helper_1.termChecker)(execTerm);
+                    var finalResult = coreb_1.core[execTermCurrent](manipulatedInput, willExecData.a, willExecData.b);
+                    newFinalData[inp - 3] = __assign(__assign({}, newFinalData[inp - 3]), { exec: finalResult });
                 }
                 newFinalData[inp - 1] = __assign(__assign({}, newFinalData[inp - 1]), { exec: final });
                 if (newFinalData[inp - 2].term && newFinalData[inp - 2].term === "comp") {
@@ -108,70 +114,80 @@ var compiler = function (text) {
         catch (_a) { }
     };
     recursive(1);
-    return finalData;
-};
-// const not = "pair(injl(comp(comp(iden)(injl(iden)))(injr(iden))))(injr(iden))";
-var not = "comp(pair(iden)(unit))(case(injr(unit))(injl(unit)))";
-var result = compiler(not);
-console.log(result);
-var effect = false;
-var runProgram = function () {
-    var customResult = result.map(function (res, index) {
-        if (index > 0 && res.termIndex - result[index - 1].termIndex > 1) {
-            effect = true;
-            return __assign(__assign({}, res), { termIndex: res.termIndex - 1 });
-        }
-        else {
-            if (effect)
-                return __assign(__assign({}, res), { termIndex: res.termIndex - 1 });
-            return res;
-        }
-    });
-    var programTreeLength = customResult[customResult.length - 1].termIndex;
-    var program = customResult[0];
-    var termMemory = [];
-    var termIndex = 1;
-    while (termIndex <= programTreeLength) {
-        var siblings = customResult.filter(function (value) { return value.termIndex === termIndex; });
-        if (termIndex === 1) {
-            termMemory.push({ main: program, programIndex: 0, siblings: siblings });
-        }
-        else {
-            var previousData = termMemory[termIndex - 2];
-            if (siblings.length === 2) {
-                termMemory.push({ main: previousData.siblings[previousData.siblings.length - 1], programIndex: 1, siblings: siblings });
-            }
-            else {
-                termMemory.push({ main: previousData.siblings[previousData.siblings.length - 2], programIndex: 0, siblings: siblings });
-            }
-        }
-        termIndex++;
+    var program = finalData[0];
+    var s;
+    var t;
+    if (program.a) {
+        s = finalData[1];
     }
-    var programResult = [];
-    // console.log(termMemory);
-    // termMemory.forEach((tm: any, index: number) => {
-    //   if (tm.main.term === "comp") {
-    //     const s = tm.siblings[0];
-    //     const t = tm.siblings[1];
-    //     if (termMemory[index + 1].programIndex !== 0) {
-    //       const term0 = s.term;
-    //       const term1 = s.a.slice(1, -1);
-    //       const term2 = s.b.slice(1, -1);
-    //       const currentTerm0 = termChecker(term0);
-    //       const currentTerm1 = termChecker(term1);
-    //       const currentTerm2 = termChecker(term2);
-    //       const funcResult1 = core[currentTerm1](input, "");
-    //       const funcResult2 = core[currentTerm2](input, "");
-    //       const final = core[currentTerm0](funcResult1, funcResult2);
-    //       programResult.push({ main: { ...tm.main, a: final } });
-    //     } else {
-    //       console.log(tm);
-    //     }
-    //   }
-    // });
-    // console.log(programResult);
+    if (program.b) {
+        t = finalData[2];
+    }
+    var currentTerm = (0, helper_1.termChecker)(program.term);
+    if (currentTerm === "comp") {
+        return t.exec;
+    }
+    return s.exec;
 };
-runProgram();
+var res = compiler(not);
+console.log(res);
+// const not = "pair(injl(comp(comp(iden)(injl(iden)))(injr(iden))))(injr(iden))";
+// const result: any[] = compiler(not);
+// console.log(result);
+// let effect = false;
+// const runProgram = () => {
+//   const customResult: any[] = result.map((res, index) => {
+//     if (index > 0 && res.termIndex - result[index - 1].termIndex > 1) {
+//       effect = true;
+//       return { ...res, termIndex: res.termIndex - 1 };
+//     } else {
+//       if (effect) return { ...res, termIndex: res.termIndex - 1 };
+//       return res;
+//     }
+//   });
+//   const programTreeLength = customResult[customResult.length - 1].termIndex;
+//   const program = customResult[0];
+//   let termMemory: any = [];
+//   let termIndex = 1;
+//   while (termIndex <= programTreeLength) {
+//     const siblings = customResult.filter((value) => value.termIndex === termIndex);
+//     if (termIndex === 1) {
+//       termMemory.push({ main: program, programIndex: 0, siblings });
+//     } else {
+//       const previousData = termMemory[termIndex - 2];
+//       if (siblings.length === 2) {
+//         termMemory.push({ main: previousData.siblings[previousData.siblings.length - 1], programIndex: 1, siblings });
+//       } else {
+//         termMemory.push({ main: previousData.siblings[previousData.siblings.length - 2], programIndex: 0, siblings });
+//       }
+//     }
+//     termIndex++;
+//   }
+//   let programResult: any = [];
+// console.log(termMemory);
+// termMemory.forEach((tm: any, index: number) => {
+//   if (tm.main.term === "comp") {
+//     const s = tm.siblings[0];
+//     const t = tm.siblings[1];
+//     if (termMemory[index + 1].programIndex !== 0) {
+//       const term0 = s.term;
+//       const term1 = s.a.slice(1, -1);
+//       const term2 = s.b.slice(1, -1);
+//       const currentTerm0 = termChecker(term0);
+//       const currentTerm1 = termChecker(term1);
+//       const currentTerm2 = termChecker(term2);
+//       const funcResult1 = core[currentTerm1](input, "");
+//       const funcResult2 = core[currentTerm2](input, "");
+//       const final = core[currentTerm0](funcResult1, funcResult2);
+//       programResult.push({ main: { ...tm.main, a: final } });
+//     } else {
+//       console.log(tm);
+//     }
+//   }
+// });
+// console.log(programResult);
+// };
+// runProgram();
 // const run = (input: string) => {
 //   let effect = false;
 //   const customResult: any[] = result.map((res, index) => {
