@@ -26,9 +26,17 @@ var textConverter_1 = require("./textConverter");
 var input = "<>";
 var true_bit = "injr(unit)";
 var false_bit = "injl(unit)";
-// const not = "pair(injr(unit))(injl(unit))";
-// const not = "pair(injr(unit))(injl(unit))";
-var not = "pair(injl(comp(comp(iden)(injl(iden)))(injr(iden))))(injr(iden))";
+//01000001
+var bs_01 = "pair(" + false_bit + ")" + "(" + true_bit + ")";
+var bs_00 = "pair(" + false_bit + ")" + "(" + false_bit + ")";
+var bs_10 = "pair(" + true_bit + ")" + "(" + false_bit + ")";
+var bs_11 = "pair(" + true_bit + ")" + "(" + true_bit + ")";
+var bs_0100 = "pair(" + bs_01 + ")" + "(" + bs_00 + ")";
+// bs-01 := pair(false-bit)(true-bit)
+// bs-00 := pair(false-bit)(false-bit)
+// bs-10 := pair(true-bit)(false-bit)
+// bs-11 := pair(true-bit)(true-bit)
+// bs-0100 := pair(bs-01)(bs-00)
 var compiler = function (text) {
     var finalData = [];
     var result = (0, textConverter_1.lineParser)(text, 0);
@@ -72,7 +80,6 @@ var compiler = function (text) {
                 var currentTerm2 = (0, helper_1.termChecker)(term2);
                 var funcResult1 = coreb_1.core[currentTerm1](manipulatedInput, "", "");
                 var funcResult2 = coreb_1.core[currentTerm2](manipulatedInput, "", "");
-                console.log("currentTerm0", currentTerm0);
                 var final = coreb_1.core[currentTerm0](funcResult1, funcResult2, "");
                 var findMainIndex = newFinalData.findIndex(function (nfw) { return nfw.termIndex === data.termIndex - 1; });
                 var previousData = newFinalData[findMainIndex];
@@ -142,9 +149,12 @@ var compiler = function (text) {
     if (currentTerm === "comp") {
         return t.exec;
     }
+    if (currentTerm === "pair") {
+        return coreb_1.core.pair(s.exec, t.exec);
+    }
     return s.exec;
 };
-var res = compiler(not);
+var res = compiler(bs_0100);
 console.log(res);
 // const not = "pair(injl(comp(comp(iden)(injl(iden)))(injr(iden))))(injr(iden))";
 // const result: any[] = compiler(not);
