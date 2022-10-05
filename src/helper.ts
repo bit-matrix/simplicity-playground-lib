@@ -34,5 +34,6 @@ export const termArgumenetCount = (termName: string) => {
     return 0;
   }
 
+  // injl , injr , take , drop
   return 1;
 };

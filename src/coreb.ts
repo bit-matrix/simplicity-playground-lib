@@ -8,12 +8,12 @@ const iden = (a: string) => {
   return a;
 };
 
-const injl = (term: string) => {
-  return "σL(" + term + ")";
+const injl = (a: string) => {
+  return "σL(" + a + ")";
 };
 
-const injr = (term: string) => {
-  return "σR(" + term + ")";
+const injr = (a: string) => {
+  return "σR(" + a + ")";
 };
 
 const take = (termA: string, termB: string) => {
@@ -35,10 +35,10 @@ const pair = (termA: any, termB: any) => {
   return "<" + termA + "," + termB + ">";
 };
 
-const case_ = (a: string, c: string, termA: any, termB: any) => {
-  if (a.charAt(1) === "L") {
+const case_ = (a: string, termA: any, termB?: any) => {
+  if (a.charAt(2) === "L") {
     return termA;
-  } else if (a.charAt(1) === "R") {
+  } else if (a.charAt(2) === "R") {
     return termB;
   }
 };
