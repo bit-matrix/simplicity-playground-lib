@@ -14,11 +14,9 @@ var programCompiler = function (input, programList) {
     var customInput = input.split(" ");
     var userCommand = customInput[0];
     var userInput = customInput.slice(1).join("");
-    console.log(userInput);
     var convertedProgram = (0, helper_1.programConverter)(programList);
     var currentProgram = convertedProgram.find(function (a) { return a.term === userCommand; });
     if (currentProgram) {
-        console.log("res", runFinal(currentProgram.program, input));
         return runFinal(currentProgram.program, userInput);
     }
     else {
