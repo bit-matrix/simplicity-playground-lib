@@ -1,107 +1,52 @@
 "use strict";
-// import { iden, injl, injr, pair, unit } from "./core";
-Object.defineProperty(exports, "__esModule", { value: true });
-var textConverter_1 = require("./textConverter");
-// let output = "";
-// export const stringifyData = (input: any[]) => {
-//   const tag = input[0];
-//   if (tag == 0) {
-//   } else if (tag == 1) {
-//     output += "σL(";
-//   } else if (tag == 2) {
-//     output += "σR(";
-//   }
-//   if (input.length == 2) {
-//     if (input[1] == 1) {
-//       output += "<>";
-//     } else {
-//       stringifyData(input[1]);
-//     }
-//   } else {
-//     output += "<";
-//     if (input[1] == 1) {
-//       output += "<>";
-//     } else {
-//       stringifyData(input[1]);
-//     }
-//     output += ",";
-//     if (input[2] == 1) {
-//       output += "<>";
-//     } else {
-//       stringifyData(input[2]);
-//     }
-//     output += ">";
-//   }
-//   if (tag == 0) {
-//   } else if (tag == 1) {
-//     output += ")";
-//   } else if (tag == 2) {
-//     output += ")";
-//   }
-//   return output;
-// };
-// const true_bit = injr(null, unit);
-// const false_bit = injl(null, unit);
-// const output_ = injr(false_bit, iden);
-// // const result = stringifyData(output_ || []);
-// console.log(result);
-// textConverter();
-var compiler = function (text) {
-    var finalData = [];
-    var result = (0, textConverter_1.test)(text, 0);
-    finalData.push(result);
-    var recursive = function (inp) {
-        var index = inp;
-        var data = finalData[index - 1];
-        if (data.a) {
-            var aText = data.a.substring(1);
-            aText = aText.slice(0, -1);
-            if (aText.charAt(aText.length - 1) === ")") {
-                var resultA = (0, textConverter_1.test)(aText, index);
-                finalData.push(resultA);
-            }
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
         }
-        if (data.b) {
-            var bText = data.b.substring(1);
-            bText = bText.slice(0, -1);
-            if (bText.charAt(bText.length - 1) === ")") {
-                var resultB = (0, textConverter_1.test)(bText, index);
-                finalData.push(resultB);
-            }
-        }
-        try {
-            var newIndex = (index += 1);
-            recursive(newIndex);
-        }
-        catch (_a) {
-            console.log("bitti");
-        }
+        return t;
     };
-    recursive(1);
-    console.log(finalData);
-    return finalData;
+    return __assign.apply(this, arguments);
 };
-// let i = 1;
-// while (i < 8) {
-//   const data = finalData[i - 1];
-//   if (data.a) {
-//     let aText: string = data.a.substring(1);
-//     aText = aText.slice(0, -1);
-//     if (aText.charAt(aText.length - 1) === ")") {
-//       const resultA = test(aText, i);
-//       finalData.push(resultA);
-//     }
-//   }
-//   if (data.b) {
-//     let bText = data.b.substring(1);
-//     bText = bText.slice(0, -1);
-//     if (bText.charAt(bText.length - 1) === ")") {
-//       const resultB = test(bText, i);
-//       finalData.push(resultB);
-//     }
-//   }
-//   i++;
-// }
-var text = "pair(injl(comp(comp(iden)(injl(iden)))(injr(iden))))(injr(iden))";
-compiler(text);
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.programCompiler = void 0;
+var corec_1 = require("./corec");
+var helper_1 = require("./helper");
+var textConverter_1 = require("./textConverter");
+var runFinal = function (text, input) {
+    var first = (0, textConverter_1.lineParser)(text, 0);
+    console.log("first", first);
+    var firstTerm = first.term;
+    var currentTerm = (0, helper_1.termChecker)(firstTerm);
+    return corec_1.corec[currentTerm](input, first.a, first.b);
+};
+console.log(runFinal("pair(pair(unit)(pair(pair(iden)(injl(iden)))(pair(injr(iden))(iden))))(pair(pair(pair(injr(iden))(iden))(pair(iden)(injl(iden))))(unit))", "<σL(<>),σR(<>)>"));
+var programCompiler = function (input, programList) {
+    var customInput = input.split(" ");
+    var userCommand = customInput[0];
+    var userInput = customInput.slice(1).join("");
+    var termList = programList.map(function (pr) { return pr.term; });
+    var userTermIndex = termList.findIndex(function (pl) { return pl === userCommand; });
+    var currentTermArray = [];
+    programList.slice(0, userTermIndex + 1).forEach(function (pr, index) {
+        if (index === 0) {
+            currentTermArray.push(pr);
+        }
+        else {
+            var isExist = termList.findIndex(function (tl) { return tl === pr.program; });
+            console.log(isExist);
+            if (isExist > -1) {
+                currentTermArray.push(__assign(__assign({}, pr), { program: currentTermArray[isExist].program }));
+            }
+            else {
+                currentTermArray.push(pr);
+            }
+        }
+    });
+    console.log("currentTermArray", currentTermArray);
+    return "hello";
+};
+exports.programCompiler = programCompiler;
 //# sourceMappingURL=index.js.map

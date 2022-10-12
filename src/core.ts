@@ -1,5 +1,5 @@
-const unit = (a: any) => {
-  if (a) throw "A couldn't be empty";
+const unit = (a: string) => {
+  if (!a) throw "A couldn't be empty";
 
   return "<>";
 };
@@ -17,28 +17,20 @@ const injr = (a: string, term: any) => {
 };
 
 const take = (a: string, b: string, term: any) => {
-  if (a) throw "a couldn't be empty";
-  if (b) throw "b couldn't be empty";
-
   return term(a);
 };
 
 const drop = (a: string, b: string, term: any) => {
-  if (a) throw "a couldn't be empty";
-  if (b) throw "b couldn't be empty";
-
   return term(b);
 };
 
 const comp = (a: string, term: any, term2: any) => {
-  return term2(term(a));
+  return term2(a, term(a));
 };
 
 const pair = (a: string, term: any, term2: any) => {
   return "<" + term(a) + "," + term2(a) + ">";
 };
-
-("case (injr unit) (injl unit)");
 
 const case_ = (a: string, c: string, term: any, term2: any) => {
   if (a.charAt(1) === "L") {
@@ -59,5 +51,5 @@ export const core = {
   drop,
   comp,
   pair,
-  case_,
+  case: case_,
 };

@@ -1,106 +1,49 @@
-// import { iden, injl, injr, pair, unit } from "./core";
+import { core } from "./coreb";
+import { corec } from "./corec";
+import { termChecker } from "./helper";
+import { lineParser } from "./textConverter";
 
-import { core } from "./core";
-import { lineParser, textConverter } from "./textConverter";
+const runFinal = (text: string, input: string) => {
+  const first = lineParser(text, 0);
 
-// let output = "";
+  const firstTerm = first.term;
 
-// export const stringifyData = (input: any[]) => {
-//   const tag = input[0];
+  const currentTerm = termChecker(firstTerm);
 
-//   if (tag == 0) {
-//   } else if (tag == 1) {
-//     output += "σL(";
-//   } else if (tag == 2) {
-//     output += "σR(";
-//   }
-
-//   if (input.length == 2) {
-//     if (input[1] == 1) {
-//       output += "<>";
-//     } else {
-//       stringifyData(input[1]);
-//     }
-//   } else {
-//     output += "<";
-//     if (input[1] == 1) {
-//       output += "<>";
-//     } else {
-//       stringifyData(input[1]);
-//     }
-//     output += ",";
-//     if (input[2] == 1) {
-//       output += "<>";
-//     } else {
-//       stringifyData(input[2]);
-//     }
-//     output += ">";
-//   }
-
-//   if (tag == 0) {
-//   } else if (tag == 1) {
-//     output += ")";
-//   } else if (tag == 2) {
-//     output += ")";
-//   }
-
-//   return output;
-// };
-
-// const true_bit = injr(null, unit);
-// const false_bit = injl(null, unit);
-
-// const output_ = injr(false_bit, iden);
-
-// // const result = stringifyData(output_ || []);
-
-// console.log(result);
-
-// textConverter();
-
-const compiler = (text: string) => {
-  const finalData: any = [];
-  let result = lineParser(text, 0);
-
-  finalData.push(result);
-
-  const recursive = (inp: number) => {
-    let index = inp;
-    const data = finalData[index - 1];
-
-    if (data.a) {
-      let aText: string = data.a.substring(1);
-      aText = aText.slice(0, -1);
-
-      if (aText.charAt(aText.length - 1) === ")") {
-        const resultA = lineParser(aText, index);
-        finalData.push(resultA);
-      }
-    }
-
-    if (data.b) {
-      let bText = data.b.substring(1);
-      bText = bText.slice(0, -1);
-
-      if (bText.charAt(bText.length - 1) === ")") {
-        const resultB = lineParser(bText, index);
-        finalData.push(resultB);
-      }
-    }
-
-    try {
-      const newIndex = (index += 1);
-      recursive(newIndex);
-    } catch {
-      console.log("end of recursive");
-    }
-  };
-
-  recursive(1);
-
-  return finalData;
+  return corec[currentTerm](input, first.a, first.b);
 };
 
-const testText = "pair(injl(comp(comp(iden)(injl(iden)))(injr(iden))))(injr(iden))";
+type SimplicityData = {
+  term: string;
+  program: string;
+};
 
-compiler(testText);
+export const programCompiler = (input: string, programList: SimplicityData[]) => {
+  const customInput = input.split(" ");
+  const userCommand = customInput[0];
+  const userInput = customInput.slice(1).join("");
+
+  const termList = programList.map((pr) => pr.term);
+  const userTermIndex = termList.findIndex((pl) => pl === userCommand);
+
+  const currentTermArray: SimplicityData[] = [];
+
+  programList.slice(0, userTermIndex + 1).forEach((pr: SimplicityData, index: number) => {
+    if (index === 0) {
+      currentTermArray.push(pr);
+    } else {
+      const isExist = termList.findIndex((tl) => tl === pr.program);
+      console.log(isExist);
+
+      if (isExist > -1) {
+        currentTermArray.push({ ...pr, program: currentTermArray[isExist].program });
+      } else {
+        currentTermArray.push(pr);
+      }
+    }
+  });
+
+  console.log("currentTermArray", currentTermArray);
+
+  return "hello";
+};

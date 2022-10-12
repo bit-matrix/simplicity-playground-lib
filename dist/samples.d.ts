@@ -1,0 +1,11 @@
+declare const not = "comp(pair(iden)(unit))(case(injr(unit))(injl(unit)))";
+declare const halfAdder: string;
+declare const true_bit = "injr(unit)";
+declare const false_bit = "injl(unit)";
+declare const bs_01: string;
+declare const bs_00: string;
+declare const bs_10: string;
+declare const bs_11: string;
+declare const bs_0100: string;
+declare const input = "<\u03C3L(<>),\u03C3R(<>)>";
+declare const long = "pair(pair(unit)(pair(pair(iden)(injl(iden)))(pair(injr(iden))(iden))))(pair(pair(pair(injr(iden))(iden))(pair(iden)(injl(iden))))(unit))";

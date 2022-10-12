@@ -7,5 +7,5 @@ export declare const core: {
     drop: (a: string, b: string, term: any) => any;
     comp: (a: string, term: any, term2: any) => any;
     pair: (a: string, term: any, term2: any) => string;
-    case: (a: string, c: string, term: any, term2: any) => any;
+    case_: (a: string, c: string, term: any, term2: any) => any;
 };

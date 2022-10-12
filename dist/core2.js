@@ -29,12 +29,12 @@ var pair = function (a, term, term2) {
 };
 var case_ = function (a, c, term, term2) {
     if (a.charAt(1) === "L") {
-        var input_1 = a.slice(3, a.length - 1);
-        return term(input_1, c);
+        var input = a.slice(3, a.length - 1);
+        return term(input, c);
     }
     else if (a.charAt(1) === "R") {
-        var input_2 = a.slice(3, a.length - 1);
-        return term2(input_2, c);
+        var input = a.slice(3, a.length - 1);
+        return term2(input, c);
     }
 };
 exports.core = {
@@ -46,6 +46,6 @@ exports.core = {
     drop: drop,
     comp: comp,
     pair: pair,
-    case: case_,
+    case_: case_,
 };
-//# sourceMappingURL=core.js.map
+//# sourceMappingURL=core2.js.map
