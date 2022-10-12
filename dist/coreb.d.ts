@@ -3,9 +3,9 @@ export declare const core: {
     iden: (a: string) => string;
     injl: (a: string) => string;
     injr: (a: string) => string;
-    take: (termA: string, termB: string) => string;
-    drop: (termA: string, termB: string) => string;
+    take: (input: string) => string;
+    drop: (input: string) => string;
     comp: (term: any) => any;
-    pair: (termA: any, termB: any) => string;
+    pair: (input: string, termA: any, termB: any) => string;
     case: (a: string, termA: any, termB: any) => any;
 };

@@ -15,23 +15,20 @@ var injl = function (a) {
 var injr = function (a) {
     return "σR(" + a + ")";
 };
-var take = function (termA, termB) {
-    if (!termB)
-        throw "B couldn't be empty";
-    return termA;
+var take = function (input) {
+    return input.split(",")[0].substring(1);
 };
-var drop = function (termA, termB) {
-    if (!termA)
-        throw "A couldn't be empty";
-    return termB;
+var drop = function (input) {
+    return input.split(",")[1].slice(0, -1);
 };
 var comp = function (term) {
     return term;
 };
-var pair = function (termA, termB) {
+var pair = function (input, termA, termB) {
     return "<" + termA + "," + termB + ">";
 };
 var case_ = function (a, termA, termB) {
+    // @TO-DO throw
     if (a.charAt(2) === "L") {
         return termA;
     }
