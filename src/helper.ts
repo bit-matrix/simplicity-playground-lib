@@ -37,3 +37,19 @@ export const termArgumenetCount = (termName: string) => {
   // injl , injr , take , drop
   return 1;
 };
+
+export type SimplicityData = {
+  term: string;
+  program: string;
+};
+
+export const programConverter = (values: SimplicityData[]) => {
+  const newValues = [...values];
+  newValues.map((value, index) => {
+    newValues.slice(0, index).map((compiled_value) => {
+      value.program = value.program.replace(compiled_value["term"], compiled_value["program"]);
+    });
+  });
+
+  return newValues;
+};
