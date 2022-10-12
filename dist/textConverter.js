@@ -58,15 +58,18 @@ var textConverter = function () {
 exports.textConverter = textConverter;
 var lineParser = function (text, termIndex) {
     var _a;
+    if (text === "iden" || text === "unit") {
+        return { term: text };
+    }
     var parsedText = text.split("");
     var starts = [];
     var ends = [];
     for (var i = 0; i < parsedText.length; i++) {
-        var data_1 = parsedText[i];
-        if (data_1 === "(") {
+        var data = parsedText[i];
+        if (data === "(") {
             starts.push(i);
         }
-        if (data_1 === ")") {
+        if (data === ")") {
             ends.push(i);
         }
     }
@@ -85,27 +88,29 @@ var lineParser = function (text, termIndex) {
         var endIndex = sortedArray.findIndex(function (rh) { return rh === fs; });
         final.push({ s: fs, e: ends[endIndex], args: text.slice(fs, ends[endIndex] + 1) });
     });
-    var length = 0;
-    var data = final[0];
-    var result;
-    var termNameText = text.substring(length, data.s);
-    var termName = (0, helper_1.termChecker)(termNameText);
-    var arguementCount = (0, helper_1.termArgumenetCount)(termName);
-    length += data.s;
-    if (arguementCount === 2) {
-        var a = final[0].args;
-        var bigEnd_1 = ends.sort(function (a, b) { return b - a; })[0];
-        var b = (_a = final.find(function (f) { return f.e === bigEnd_1; })) === null || _a === void 0 ? void 0 : _a.args;
-        result = { term: termName, termIndex: termIndex, a: a, b: b };
+    if (final.length > 0) {
+        var length_1 = 0;
+        var data = final[0];
+        var result = void 0;
+        var termNameText = text.substring(length_1, data.s);
+        var termName = (0, helper_1.termChecker)(termNameText);
+        var arguementCount = (0, helper_1.termArgumenetCount)(termName);
+        length_1 += data.s;
+        if (arguementCount === 2) {
+            var a = final[0].args;
+            var bigEnd_1 = ends.sort(function (a, b) { return b - a; })[0];
+            var b = (_a = final.find(function (f) { return f.e === bigEnd_1; })) === null || _a === void 0 ? void 0 : _a.args;
+            result = { term: termName, termIndex: termIndex, a: a, b: b };
+        }
+        else if (arguementCount === 1) {
+            var a = final[0].args;
+            result = { term: termName, termIndex: termIndex, a: a };
+        }
+        else if (arguementCount === 0) {
+            result = { term: termName, termIndex: termIndex };
+        }
+        return result;
     }
-    else if (arguementCount === 1) {
-        var a = final[0].args;
-        result = { term: termName, termIndex: termIndex, a: a };
-    }
-    else if (arguementCount === 0) {
-        result = { term: termName, termIndex: termIndex };
-    }
-    return result;
 };
 exports.lineParser = lineParser;
 //# sourceMappingURL=textConverter.js.map

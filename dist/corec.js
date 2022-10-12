@@ -36,13 +36,13 @@ var injr = function (a, term) {
     return "σR(" + data + ")";
 };
 var take = function (input, term) {
-    var line = (0, textConverter_1.lineParser)(term.slice(1, -1), 0);
+    var line = term.length > 6 ? (0, textConverter_1.lineParser)(term.slice(1, -1), 0) : term;
     var s = (0, helper_1.termChecker)(term.slice(1, 5));
     var modifiedInput = input.split(",")[0].substring(1);
-    return exports.corec[s](input, line.a, line.b);
+    return exports.corec[s](modifiedInput, line.a, line.b);
 };
 var drop = function (input, term) {
-    var line = (0, textConverter_1.lineParser)(term.slice(1, -1), 0);
+    var line = term.length > 6 ? (0, textConverter_1.lineParser)(term.slice(1, -1), 0) : term;
     var s = (0, helper_1.termChecker)(term.slice(1, 5));
     var modifiedInput = input.split(",")[1].slice(0, -1);
     return exports.corec[s](modifiedInput, line.a, line.b);
@@ -83,12 +83,14 @@ var case_ = function (input, termA, termB) {
     var newFirstItem = modifiedInput[0].split("(").pop().split(")")[0];
     var finalInput = "<" + newFirstItem + ">," + modifiedInput[1];
     if (input.charAt(2) === "L") {
-        var line = (0, textConverter_1.lineParser)(termA.slice(1, -1), 0);
+        var line = termA.length > 6 ? (0, textConverter_1.lineParser)(termA.slice(1, -1), 0) : termA;
+        finalInput = termA.length > 6 ? finalInput : input;
         var s = (0, helper_1.termChecker)(termA.slice(1, 5));
         return exports.corec[s](finalInput, line.a, line.b);
     }
     else if (input.charAt(2) === "R") {
-        var line = (0, textConverter_1.lineParser)(termB.slice(1, -1), 0);
+        var line = termB.length > 6 ? (0, textConverter_1.lineParser)(termB.slice(1, -1), 0) : termB;
+        finalInput = termB.length > 6 ? finalInput : input;
         var t = (0, helper_1.termChecker)(termB.slice(1, 5));
         return exports.corec[t](finalInput, line.a, line.b);
     }

@@ -29,12 +29,12 @@ var pair = function (a, term, term2) {
 };
 var case_ = function (a, c, term, term2) {
     if (a.charAt(1) === "L") {
-        var input = a.slice(3, a.length - 1);
-        return term(input, c);
+        var input_1 = a.slice(3, a.length - 1);
+        return term(input_1, c);
     }
     else if (a.charAt(1) === "R") {
-        var input = a.slice(3, a.length - 1);
-        return term2(input, c);
+        var input_2 = a.slice(3, a.length - 1);
+        return term2(input_2, c);
     }
 };
 exports.core = {
