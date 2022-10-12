@@ -1,8 +1,180 @@
 import { core } from "./coreb";
+import { corec } from "./corec";
 import { termChecker } from "./helper";
 import { lineParser } from "./textConverter";
 
-const input = "<>";
+const recursive = (input: string, finalData: any[], index: number) => {
+  const data = finalData[index - 1];
+  let manipulatedInput = input;
+
+  if (data.a) {
+    let aText: string = data.a.substring(1);
+    aText = aText.slice(0, -1);
+
+    if (aText.charAt(aText.length - 1) === ")") {
+      const resultA = lineParser(aText, index);
+      finalData.push(resultA);
+    } else {
+      const currentTerm = termChecker(aText);
+
+      const exec = core[currentTerm](manipulatedInput, "", "");
+
+      const newFinalData = [...finalData];
+      newFinalData[data.termIndex] = { ...data, a: exec };
+      finalData = newFinalData;
+    }
+  }
+
+  if (data.b) {
+    let bText = data.b.substring(1);
+    bText = bText.slice(0, -1);
+
+    if (bText.charAt(bText.length - 1) === ")") {
+      const resultB = lineParser(bText, index);
+      finalData.push(resultB);
+    } else {
+      const currentTerm = termChecker(bText);
+      const exec = core[currentTerm](manipulatedInput, "", "");
+
+      const newFinalData = [...finalData];
+      newFinalData[data.termIndex] = { ...data, b: exec };
+
+      finalData = newFinalData;
+    }
+  }
+
+  try {
+    index++;
+    recursive(manipulatedInput, finalData, index);
+  } catch (err) {
+  } finally {
+    return finalData;
+  }
+};
+
+const compiler = (text: string) => {
+  let finalData: any = [];
+  let result = { ...lineParser(text, 0), dataIndex: 0 };
+
+  finalData.push(result);
+
+  return finalData;
+};
+
+const runFinal = (text: string, input: string) => {
+  const first = lineParser(text, 0);
+  const firstTerm = first.term;
+
+  const currentTerm = termChecker(firstTerm);
+
+  console.log("first", first);
+  console.log("here", corec[currentTerm](input, first.a, first.b));
+
+  if (currentTerm === "comp") {
+    // @TO-DO comp logic
+  }
+
+  // const funcResult1 = core[currentTerm](input, first.a, first.b || "");
+
+  // const designedData = lineParser(funcResult1.slice(1, -1), 0);
+
+  // const currentTerm2 = termChecker(designedData.term);
+
+  // const funcResult2 = core[currentTerm2](input, first.a, first.b || "");
+
+  // const designedData2 = lineParser(designedData.a.slice(1, -1), 1);
+
+  // console.log(designedData2);
+
+  // const currentTerm3 = termChecker(designedData.term);
+
+  // console.log(recursiveResult);
+  // const startTerm = parsedData[0].term;
+  // console.log(startTerm);
+  //   const newFinalData = [...finalData];
+  //   if (data.a && data.b) {
+  //     const term0 = data.term;
+  //     const term1 = data.a.slice(1, -1);
+  //     const term2 = data.b.slice(1, -1);
+  //     const currentTerm0 = termChecker(term0);
+  //     const currentTerm1 = termChecker(term1);
+  //     const currentTerm2 = termChecker(term2);
+  //     const funcResult1 = core[currentTerm1](manipulatedInput, "", "");
+  //     const funcResult2 = core[currentTerm2](manipulatedInput, "", "");
+  //     const final = core[currentTerm0](funcResult1, funcResult2, "");
+  //     const findMainIndex = newFinalData.findIndex((nfw) => nfw.termIndex === data.termIndex - 1);
+  //     const previousData = newFinalData[findMainIndex];
+  //     // const previousDataA = previousData.a.startsWith("(" + currentTerm0);
+  //     // if (previousDataA) {
+  //     //   newFinalData[findMainIndex] = { ...newFinalData[findMainIndex], a: final };
+  //     // } else {
+  //     //   newFinalData[findMainIndex] = { ...newFinalData[findMainIndex], b: final };
+  //     // }
+  //     // console.log("test", inp / 2 - 1, data);
+  //     newFinalData[inp - 1] = { ...newFinalData[inp - 1], exec: final };
+  //     if (previousData.term === "comp") {
+  //       manipulatedInput = final;
+  //     }
+  //   } else {
+  //     const term0 = data.term;
+  //     const term1 = data.a.slice(1, -1);
+  //     const currentTerm0 = termChecker(term0);
+  //     const currentTerm1 = termChecker(term1);
+  //     const funcResult1 = core[currentTerm1](manipulatedInput, "", "");
+  //     const final = core[currentTerm0](funcResult1, "", "");
+  //     const isExist = newFinalData.filter((nfd) => nfd.termIndex === data.termIndex).length > 0;
+  //     let previousData = newFinalData.filter((nfd) => nfd.termIndex === data.termIndex - 1);
+  //     if (previousData.length === 0) {
+  //       previousData = newFinalData.filter((nfd) => nfd.termIndex === data.termIndex - 2);
+  //     }
+  //     if (!newFinalData[inp - 2].exec) {
+  //       newFinalData[inp - 2] = { ...newFinalData[inp - 2], a: final };
+  //     } else {
+  //       newFinalData[inp - 3] = { ...newFinalData[inp - 3], b: final };
+  //       const willExecData = newFinalData[inp - 3];
+  //       const execTerm = willExecData.term;
+  //       const execTermCurrent = termChecker(execTerm);
+  //       let finalResult = "";
+  //       if (execTermCurrent === "case") {
+  //         finalResult = core[execTermCurrent](manipulatedInput, willExecData.a, willExecData.b);
+  //       } else {
+  //         finalResult = core[execTermCurrent](willExecData.a, willExecData.b);
+  //       }
+  //       newFinalData[inp - 3] = { ...newFinalData[inp - 3], exec: finalResult };
+  //     }
+  //     newFinalData[inp - 1] = { ...newFinalData[inp - 1], exec: final };
+  //     if (newFinalData[inp - 2].term && newFinalData[inp - 2].term === "comp") {
+  //       manipulatedInput = final;
+  //     }
+  //   }
+  //   finalData = newFinalData;
+  // }
+  // const program = finalData[0];
+  // let s: any;
+  // let t: any;
+  // if (program.a) {
+  //   s = finalData[1];
+  // }
+  // if (program.b) {
+  //   t = finalData[2];
+  // }
+  // const currentTerm = termChecker(program.term);
+  // if (program.exec) {
+  //   return program.exec;
+  // }
+  // if (currentTerm === "comp") {
+  //   return t.exec;
+  // }
+  // if (currentTerm === "pair") {
+  //   return core.pair(s.exec, t.exec);
+  // }
+  // return s.exec;
+};
+
+// const res = compiler(bs_0100);
+
+const not = "comp(pair(iden)(unit))(case(injr(unit))(injl(unit)))";
+const halfAdder = "case(drop(pair(injl(unit))(iden)))(drop(pair(iden)(" + not + ")))";
 
 const true_bit = "injr(unit)";
 const false_bit = "injl(unit)";
@@ -16,160 +188,12 @@ const bs_11 = "pair(" + true_bit + ")" + "(" + true_bit + ")";
 
 const bs_0100 = "pair(" + bs_01 + ")" + "(" + bs_00 + ")";
 
-// bs-01 := pair(false-bit)(true-bit)
-// bs-00 := pair(false-bit)(false-bit)
-// bs-10 := pair(true-bit)(false-bit)
-// bs-11 := pair(true-bit)(true-bit)
-// bs-0100 := pair(bs-01)(bs-00)
+const input = "<σL(<>),σR(<>)>";
 
-const compiler = (text: string) => {
-  let finalData: any = [];
-  let result = lineParser(text, 0);
-  let manipulatedInput = input;
+const uzun = "pair(pair(unit)(pair(pair(iden)(injl(iden)))(pair(injr(iden))(iden))))(pair(pair(pair(injr(iden))(iden))(pair(iden)(injl(iden))))(unit))";
+console.log("bs_01", bs_0100);
 
-  finalData.push(result);
-
-  const recursive = (inp: number) => {
-    let index = inp;
-    let execute = false;
-
-    const data = finalData[index - 1];
-
-    if (data.a) {
-      let aText: string = data.a.substring(1);
-      aText = aText.slice(0, -1);
-
-      if (aText.charAt(aText.length - 1) === ")") {
-        const resultA = lineParser(aText, index);
-        finalData.push(resultA);
-      } else {
-        execute = true;
-      }
-    }
-
-    if (data.b) {
-      let bText = data.b.substring(1);
-      bText = bText.slice(0, -1);
-
-      if (bText.charAt(bText.length - 1) === ")") {
-        const resultB = lineParser(bText, index);
-        finalData.push(resultB);
-        execute = false;
-      } else {
-        execute = true;
-      }
-    }
-
-    if (execute) {
-      const newFinalData = [...finalData];
-
-      if (data.a && data.b) {
-        const term0 = data.term;
-        const term1 = data.a.slice(1, -1);
-        const term2 = data.b.slice(1, -1);
-
-        const currentTerm0 = termChecker(term0);
-        const currentTerm1 = termChecker(term1);
-        const currentTerm2 = termChecker(term2);
-
-        const funcResult1 = core[currentTerm1](manipulatedInput, "", "");
-        const funcResult2 = core[currentTerm2](manipulatedInput, "", "");
-
-        const final = core[currentTerm0](funcResult1, funcResult2, "");
-        const findMainIndex = newFinalData.findIndex((nfw) => nfw.termIndex === data.termIndex - 1);
-        const previousData = newFinalData[findMainIndex];
-        // const previousDataA = previousData.a.startsWith("(" + currentTerm0);
-
-        // if (previousDataA) {
-        //   newFinalData[findMainIndex] = { ...newFinalData[findMainIndex], a: final };
-        // } else {
-        //   newFinalData[findMainIndex] = { ...newFinalData[findMainIndex], b: final };
-        // }
-
-        newFinalData[inp - 1] = { ...newFinalData[inp - 1], exec: final };
-
-        if (previousData.term === "comp") {
-          manipulatedInput = final;
-        }
-      } else {
-        const term0 = data.term;
-        const term1 = data.a.slice(1, -1);
-        const currentTerm0 = termChecker(term0);
-        const currentTerm1 = termChecker(term1);
-        const funcResult1 = core[currentTerm1](manipulatedInput, "", "");
-        const final = core[currentTerm0](funcResult1, "", "");
-
-        if (!newFinalData[inp - 2].exec) {
-          newFinalData[inp - 2] = { ...newFinalData[inp - 2], a: final };
-        } else {
-          newFinalData[inp - 3] = { ...newFinalData[inp - 3], b: final };
-
-          const willExecData = newFinalData[inp - 3];
-          const execTerm = willExecData.term;
-          const execTermCurrent = termChecker(execTerm);
-          let finalResult = "";
-
-          if (execTermCurrent === "case") {
-            finalResult = core[execTermCurrent](manipulatedInput, willExecData.a, willExecData.b);
-          } else {
-            finalResult = core[execTermCurrent](willExecData.a, willExecData.b);
-          }
-
-          newFinalData[inp - 3] = { ...newFinalData[inp - 3], exec: finalResult };
-        }
-
-        newFinalData[inp - 1] = { ...newFinalData[inp - 1], exec: final };
-
-        if (newFinalData[inp - 2].term && newFinalData[inp - 2].term === "comp") {
-          manipulatedInput = final;
-        }
-      }
-
-      finalData = newFinalData;
-    }
-
-    try {
-      index++;
-      recursive(index);
-    } catch (err) {}
-  };
-
-  recursive(1);
-
-  console.log("finalData", finalData);
-
-  const program = finalData[0];
-  let s: any;
-  let t: any;
-
-  if (program.a) {
-    s = finalData[1];
-  }
-
-  if (program.b) {
-    t = finalData[2];
-  }
-
-  const currentTerm = termChecker(program.term);
-
-  if (program.exec) {
-    return program.exec;
-  }
-
-  if (currentTerm === "comp") {
-    return t.exec;
-  }
-
-  if (currentTerm === "pair") {
-    return core.pair(s.exec, t.exec);
-  }
-
-  return s.exec;
-};
-
-const res = compiler(bs_0100);
-
-console.log(res);
+const res = runFinal(uzun, input);
 
 // const not = "pair(injl(comp(comp(iden)(injl(iden)))(injr(iden))))(injr(iden))";
 
@@ -334,4 +358,39 @@ console.log(res);
 //   }
 
 //   console.log(finalResult);
+// };
+
+type SimplicityData = {
+  term: string;
+  program: string;
+};
+
+// export const programCompiler = (input: string, programList: SimplicityData[]) => {
+//   const customInput = input.split(" ");
+//   const userCommand = customInput[0];
+//   const userInput = customInput.slice(1).join("");
+
+//   const termList = programList.map((pr) => pr.term);
+//   const userTermIndex = termList.findIndex((pl) => pl === userCommand);
+
+//   const currentTermArray: SimplicityData[] = [];
+
+//   programList.slice(0, userTermIndex + 1).forEach((pr: SimplicityData, index: number) => {
+//     if (index === 0) {
+//       currentTermArray.push(pr);
+//     } else {
+//       const isExist = termList.findIndex((tl) => tl === pr.program);
+//       console.log(isExist);
+
+//       if (isExist > -1) {
+//         currentTermArray.push({ ...pr, program: currentTermArray[isExist].program });
+//       } else {
+//         currentTermArray.push(pr);
+//       }
+//     }
+//   });
+
+//   console.log("currentTermArray", currentTermArray);
+
+//   return "hello";
 // };
