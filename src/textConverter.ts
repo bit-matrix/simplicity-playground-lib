@@ -56,6 +56,10 @@ export const textConverter = () => {
 };
 
 export const lineParser = (text: string, termIndex: number) => {
+  if (text === "iden" || text === "unit") {
+    return { term: text };
+  }
+
   const parsedText = text.split("");
 
   let starts: number[] = [];
@@ -94,29 +98,30 @@ export const lineParser = (text: string, termIndex: number) => {
     final.push({ s: fs, e: ends[endIndex], args: text.slice(fs, ends[endIndex] + 1) });
   });
 
-  let length = 0;
+  if (final.length > 0) {
+    let length = 0;
+    const data = final[0];
 
-  const data = final[0];
+    let result: any;
 
-  let result: any;
+    const termNameText = text.substring(length, data.s);
+    const termName = termChecker(termNameText);
+    const arguementCount = termArgumenetCount(termName);
+    length += data.s;
 
-  const termNameText = text.substring(length, data.s);
-  const termName = termChecker(termNameText);
-  const arguementCount = termArgumenetCount(termName);
-  length += data.s;
+    if (arguementCount === 2) {
+      const a = final[0].args;
+      const bigEnd = ends.sort((a, b) => b - a)[0];
+      const b = final.find((f) => f.e === bigEnd)?.args;
 
-  if (arguementCount === 2) {
-    const a = final[0].args;
-    const bigEnd = ends.sort((a, b) => b - a)[0];
-    const b = final.find((f) => f.e === bigEnd)?.args;
+      result = { term: termName, termIndex, a, b };
+    } else if (arguementCount === 1) {
+      const a = final[0].args;
+      result = { term: termName, termIndex, a };
+    } else if (arguementCount === 0) {
+      result = { term: termName, termIndex };
+    }
 
-    result = { term: termName, termIndex, a, b };
-  } else if (arguementCount === 1) {
-    const a = final[0].args;
-    result = { term: termName, termIndex, a };
-  } else if (arguementCount === 0) {
-    result = { term: termName, termIndex };
+    return result;
   }
-
-  return result;
 };

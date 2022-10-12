@@ -39,15 +39,15 @@ const injr = (a: string, term: any): any => {
 };
 
 const take = (input: string, term: any): any => {
-  const line = lineParser(term.slice(1, -1), 0);
+  const line = term.length > 6 ? lineParser(term.slice(1, -1), 0) : term;
   const s = termChecker(term.slice(1, 5));
   let modifiedInput = input.split(",")[0].substring(1);
 
-  return corec[s](input, line.a, line.b);
+  return corec[s](modifiedInput, line.a, line.b);
 };
 
 const drop = (input: string, term: any): any => {
-  const line = lineParser(term.slice(1, -1), 0);
+  const line = term.length > 6 ? lineParser(term.slice(1, -1), 0) : term;
   const s = termChecker(term.slice(1, 5));
   let modifiedInput = input.split(",")[1].slice(0, -1);
 
@@ -100,19 +100,21 @@ const pair = (input: string, termA: any, termB: any): any => {
 
 const case_ = (input: string, termA: any, termB: any): any => {
   // @TO-DO throw
-
   const modifiedInput = input.split(",");
   const newFirstItem = modifiedInput[0].split("(").pop()!.split(")")[0];
-  const finalInput = "<" + newFirstItem + ">," + modifiedInput[1];
+  let finalInput = "<" + newFirstItem + ">," + modifiedInput[1];
 
   if (input.charAt(2) === "L") {
-    const line = lineParser(termA.slice(1, -1), 0);
+    const line = termA.length > 6 ? lineParser(termA.slice(1, -1), 0) : termA;
+    finalInput = termA.length > 6 ? finalInput : input;
 
     const s = termChecker(termA.slice(1, 5));
 
     return corec[s](finalInput, line.a, line.b);
   } else if (input.charAt(2) === "R") {
-    const line = lineParser(termB.slice(1, -1), 0);
+    const line = termB.length > 6 ? lineParser(termB.slice(1, -1), 0) : termB;
+    finalInput = termB.length > 6 ? finalInput : input;
+
     const t = termChecker(termB.slice(1, 5));
 
     return corec[t](finalInput, line.a, line.b);
