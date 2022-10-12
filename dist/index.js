@@ -17,12 +17,10 @@ var helper_1 = require("./helper");
 var textConverter_1 = require("./textConverter");
 var runFinal = function (text, input) {
     var first = (0, textConverter_1.lineParser)(text, 0);
-    console.log("first", first);
     var firstTerm = first.term;
     var currentTerm = (0, helper_1.termChecker)(firstTerm);
     return corec_1.corec[currentTerm](input, first.a, first.b);
 };
-console.log(runFinal("pair(pair(unit)(pair(pair(iden)(injl(iden)))(pair(injr(iden))(iden))))(pair(pair(pair(injr(iden))(iden))(pair(iden)(injl(iden))))(unit))", "<σL(<>),σR(<>)>"));
 var programCompiler = function (input, programList) {
     var customInput = input.split(" ");
     var userCommand = customInput[0];
