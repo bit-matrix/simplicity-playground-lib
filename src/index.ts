@@ -1,4 +1,3 @@
-import { core } from "./coreb";
 import { corec } from "./corec";
 import { programConverter, SimplicityData, termChecker } from "./helper";
 import { lineParser } from "./textConverter";
@@ -23,7 +22,6 @@ export const programCompiler = (input: string, programList: SimplicityData[]) =>
   const currentProgram = convertedProgram.find((a) => a.term === userCommand);
 
   if (currentProgram) {
-    console.log("res", runFinal(currentProgram.program, input));
     return runFinal(currentProgram.program, userInput);
   } else {
     return "Wrong Program !";
