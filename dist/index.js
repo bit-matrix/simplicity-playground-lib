@@ -16,6 +16,7 @@ var programCompiler = function (input, programList) {
     var userInput = customInput.slice(1).join("");
     var convertedProgram = (0, helper_1.programConverter)(programList);
     var currentProgram = convertedProgram.find(function (a) { return a.term === userCommand; });
+    console.log(currentProgram);
     if (currentProgram) {
         return runFinal(currentProgram.program, userInput);
     }
