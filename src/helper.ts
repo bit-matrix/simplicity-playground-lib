@@ -43,11 +43,20 @@ export type SimplicityData = {
   program: string;
 };
 
+const deepCopy = <T>(oldObject: T): T => {
+  return JSON.parse(JSON.stringify(oldObject)) as T;
+};
+
+const replaceAll = (str: string, find: string, replace: string) => {
+  return str.replace(new RegExp(find, "g"), replace);
+};
+
 export const programConverter = (values: SimplicityData[]) => {
-  const newValues = [...values];
+  const newValues = deepCopy(values);
+
   newValues.map((value, index) => {
     newValues.slice(0, index).map((compiled_value) => {
-      value.program = value.program.replace(compiled_value["term"], compiled_value["program"]);
+      value.program = replaceAll(value.program, compiled_value["term"], compiled_value["program"]);
     });
   });
 
