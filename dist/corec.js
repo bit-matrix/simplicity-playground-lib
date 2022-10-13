@@ -15,7 +15,8 @@ var injl = function (a, term) {
     var data = "";
     if (term.length > 6) {
         var s = (0, helper_1.termChecker)(term.slice(1, 5));
-        data = exports.corec[s](a, "", "");
+        var line = (0, textConverter_1.lineParser)(term.slice(1, -1), 0);
+        data = exports.corec[s](a, line.a, line.b);
     }
     else {
         var s = (0, helper_1.termChecker)(term.slice(1, -1));
@@ -27,7 +28,8 @@ var injr = function (a, term) {
     var data = "";
     if (term.length > 6) {
         var s = (0, helper_1.termChecker)(term.slice(1, 5));
-        data = exports.corec[s](a, "", "");
+        var line = (0, textConverter_1.lineParser)(term.slice(1, -1), 0);
+        data = exports.corec[s](a, line.a, line.b);
     }
     else {
         var s = (0, helper_1.termChecker)(term.slice(1, -1));
