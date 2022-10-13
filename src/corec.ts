@@ -13,9 +13,12 @@ const iden = (a: string) => {
 
 const injl = (a: string, term: any): any => {
   let data = "";
+
   if (term.length > 6) {
     const s = termChecker(term.slice(1, 5));
-    data = corec[s](a, "", "");
+    const line = lineParser(term.slice(1, -1), 0);
+
+    data = corec[s](a, line.a, line.b);
   } else {
     const s = termChecker(term.slice(1, -1));
     data = corec[s](a, "", "");
@@ -29,9 +32,12 @@ const injr = (a: string, term: any): any => {
 
   if (term.length > 6) {
     const s = termChecker(term.slice(1, 5));
-    data = corec[s](a, "", "");
+    const line = lineParser(term.slice(1, -1), 0);
+
+    data = corec[s](a, line.a, line.b);
   } else {
     const s = termChecker(term.slice(1, -1));
+
     data = corec[s](a, "", "");
   }
 
