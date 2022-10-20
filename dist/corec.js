@@ -40,13 +40,13 @@ var injr = function (a, term) {
 var take = function (input, term) {
     var line = term.length > 6 ? (0, textConverter_1.lineParser)(term.slice(1, -1), 0) : term;
     var s = (0, helper_1.termChecker)(term.slice(1, 5));
-    var modifiedInput = input.split(",")[0].substring(1);
+    var modifiedInput = input.split(",").slice(1).join(",").substring(1);
     return exports.corec[s](modifiedInput, line.a, line.b);
 };
 var drop = function (input, term) {
     var line = term.length > 6 ? (0, textConverter_1.lineParser)(term.slice(1, -1), 0) : term;
     var s = (0, helper_1.termChecker)(term.slice(1, 5));
-    var modifiedInput = input.split(",")[1].slice(0, -1);
+    var modifiedInput = input.split(",").slice(1).join(",").slice(0, -1);
     return exports.corec[s](modifiedInput, line.a, line.b);
 };
 var comp = function (input, termA, termB) {
@@ -77,13 +77,19 @@ var pair = function (input, termA, termB) {
         var parserResult = (0, textConverter_1.lineParser)(termB.slice(1, -1), 0);
         tPart = { a: parserResult.a, b: parserResult.b };
     }
+    if (s === "pair" && t === "pair") {
+        var programResult = "<" + exports.corec[s](input, sPart.a, sPart.b) + "," + exports.corec[t](input, tPart.a, tPart.b) + ">";
+        console.log("programResult", programResult);
+        console.log("res", "<" + exports.corec[s](programResult, sPart.a, sPart.b) + "," + exports.corec[t](programResult, tPart.a, tPart.b) + ">");
+        return "<" + exports.corec[s](programResult, sPart.a, sPart.b) + "," + exports.corec[t](programResult, tPart.a, tPart.b) + ">";
+    }
     return "<" + exports.corec[s](input, sPart.a, sPart.b) + "," + exports.corec[t](input, tPart.a, tPart.b) + ">";
 };
 var case_ = function (input, termA, termB) {
     // @TO-DO throw
     var modifiedInput = input.split(",");
     var newFirstItem = modifiedInput[0].split("(").pop().split(")")[0];
-    var finalInput = "<" + newFirstItem + ">," + modifiedInput[1];
+    var finalInput = "<" + newFirstItem + ">," + modifiedInput.slice(1).join(",");
     if (input.charAt(2) === "L") {
         var line = termA.length > 6 ? (0, textConverter_1.lineParser)(termA.slice(1, -1), 0) : termA;
         finalInput = termA.length > 6 ? finalInput : input;
