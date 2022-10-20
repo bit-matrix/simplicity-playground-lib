@@ -47,7 +47,7 @@ const injr = (a: string, term: any): any => {
 const take = (input: string, term: any): any => {
   const line = term.length > 6 ? lineParser(term.slice(1, -1), 0) : term;
   const s = termChecker(term.slice(1, 5));
-  let modifiedInput = input.split(",")[0].substring(1);
+  let modifiedInput = input.split(",").slice(1).join(",").substring(1);
 
   return corec[s](modifiedInput, line.a, line.b);
 };
@@ -55,7 +55,8 @@ const take = (input: string, term: any): any => {
 const drop = (input: string, term: any): any => {
   const line = term.length > 6 ? lineParser(term.slice(1, -1), 0) : term;
   const s = termChecker(term.slice(1, 5));
-  let modifiedInput = input.split(",")[1].slice(0, -1);
+
+  let modifiedInput = input.split(",").slice(1).join(",").slice(0, -1);
 
   return corec[s](modifiedInput, line.a, line.b);
 };
@@ -108,7 +109,7 @@ const case_ = (input: string, termA: any, termB: any): any => {
   // @TO-DO throw
   const modifiedInput = input.split(",");
   const newFirstItem = modifiedInput[0].split("(").pop()!.split(")")[0];
-  let finalInput = "<" + newFirstItem + ">," + modifiedInput[1];
+  let finalInput = "<" + newFirstItem + ">," + modifiedInput.slice(1).join(",");
 
   if (input.charAt(2) === "L") {
     const line = termA.length > 6 ? lineParser(termA.slice(1, -1), 0) : termA;
