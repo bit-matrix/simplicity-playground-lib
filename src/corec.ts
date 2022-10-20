@@ -1,4 +1,4 @@
-import { termChecker } from "./helper";
+import { isProductType, termChecker } from "./helper";
 import { lineParser } from "./textConverter";
 
 const unit = (a: string) => {
@@ -45,6 +45,8 @@ const injr = (a: string, term: any): any => {
 };
 
 const take = (input: string, term: any): any => {
+  isProductType(input);
+
   const line = term.length > 6 ? lineParser(term.slice(1, -1), 0) : term;
   const s = termChecker(term.slice(1, 5));
   let modifiedInput = input.split(",").slice(1).join(",").substring(1);
@@ -53,6 +55,7 @@ const take = (input: string, term: any): any => {
 };
 
 const drop = (input: string, term: any): any => {
+  isProductType(input);
   const line = term.length > 6 ? lineParser(term.slice(1, -1), 0) : term;
   const s = termChecker(term.slice(1, 5));
 

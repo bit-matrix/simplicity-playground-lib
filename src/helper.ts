@@ -62,3 +62,11 @@ export const programConverter = (values: SimplicityData[]) => {
 
   return newValues;
 };
+
+export const isProductType = (text: string) => {
+  if (text.startsWith("<") && text.charAt(text.length - 1) === ">") {
+    return true;
+  }
+
+  throw "Input must be product type";
+};
