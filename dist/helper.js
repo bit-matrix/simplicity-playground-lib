@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.programConverter = exports.termArgumenetCount = exports.termChecker = exports.makeid = void 0;
+exports.isProductType = exports.programConverter = exports.termArgumenetCount = exports.termChecker = exports.makeid = void 0;
 var makeid = function (length) {
     var result = "";
     var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -39,9 +39,9 @@ exports.termArgumenetCount = termArgumenetCount;
 var deepCopy = function (oldObject) {
     return JSON.parse(JSON.stringify(oldObject));
 };
-var replaceAll = function (str, find, replace) {
-    return str.replace(new RegExp("^" + find + "$"), replace);
-};
+// const replaceAll = (str: string, find: string, replace: string) => {
+//   return str.replace(new RegExp("^" + find + "$"), replace);
+// };
 var programConverter = function (values) {
     var newValues = deepCopy(values);
     newValues.map(function (value, index) {
@@ -52,4 +52,11 @@ var programConverter = function (values) {
     return newValues;
 };
 exports.programConverter = programConverter;
+var isProductType = function (text) {
+    if (text.startsWith("<") && text.charAt(text.length - 1) === ">") {
+        return true;
+    }
+    throw "Input must be product type";
+};
+exports.isProductType = isProductType;
 //# sourceMappingURL=helper.js.map

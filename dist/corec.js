@@ -38,12 +38,14 @@ var injr = function (a, term) {
     return "σR(" + data + ")";
 };
 var take = function (input, term) {
+    (0, helper_1.isProductType)(input);
     var line = term.length > 6 ? (0, textConverter_1.lineParser)(term.slice(1, -1), 0) : term;
     var s = (0, helper_1.termChecker)(term.slice(1, 5));
     var modifiedInput = input.split(",").slice(1).join(",").substring(1);
     return exports.corec[s](modifiedInput, line.a, line.b);
 };
 var drop = function (input, term) {
+    (0, helper_1.isProductType)(input);
     var line = term.length > 6 ? (0, textConverter_1.lineParser)(term.slice(1, -1), 0) : term;
     var s = (0, helper_1.termChecker)(term.slice(1, 5));
     var modifiedInput = input.split(",").slice(1).join(",").slice(0, -1);

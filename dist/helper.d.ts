@@ -6,3 +6,4 @@ export declare type SimplicityData = {
     program: string;
 };
 export declare const programConverter: (values: SimplicityData[]) => SimplicityData[];
+export declare const isProductType: (text: string) => boolean;
