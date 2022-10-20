@@ -9,53 +9,8 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     return to.concat(ar || Array.prototype.slice.call(from));
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.lineParser = exports.textConverter = void 0;
-var core_1 = require("./core");
+exports.lineParser = void 0;
 var helper_1 = require("./helper");
-var userCustomTerms = [];
-var textConverter = function () {
-    var text = "func1 := comp(pair(iden)(unit))(injl(iden))";
-    // const text = "func1 := unit";
-    var textParser = text.split(" ");
-    // first declaretion
-    if (userCustomTerms.length === 0) {
-        var functionName = textParser[0];
-        var functionSyntax = textParser[1];
-        if (functionSyntax != ":=")
-            throw "Invalid simplicity function syntax";
-        if (textParser.length < 3)
-            throw "Invalid simplicity function declaretion";
-        // const text = "func1 := unit";
-        if (textParser.length === 3) {
-            var firstTermText = textParser[2];
-            if (firstTermText !== "unit" && firstTermText !== "iden")
-                throw "Invalid term";
-            var firstTerm = core_1.core[firstTermText];
-        }
-        // const text = "func1 := injl(unit)";
-        if (textParser.length === 4) {
-            var firstTermText = textParser[2];
-            var secondTermText = textParser[3];
-            if (firstTermText === "injl" || firstTermText === "injr" || firstTermText === "take" || firstTermText === "drop") {
-                if (secondTermText !== "unit" && secondTermText !== "iden")
-                    throw "Invalid term";
-            }
-            var firstTermValid = (0, helper_1.termChecker)(firstTermText);
-            var secondTermValid = (0, helper_1.termChecker)(secondTermText);
-            var firstTerm = core_1.core[firstTermValid];
-            var secondTerm = core_1.core[secondTermValid];
-        }
-        if (textParser.length > 4) {
-            var termExpression = textParser.slice(2);
-            var firstTermText = textParser[0];
-            var firstTermValid = (0, helper_1.termChecker)(firstTermText);
-            if (termExpression[1].charAt(0) !== "(")
-                throw "Invalid syntax";
-        }
-        userCustomTerms.push(functionName);
-    }
-};
-exports.textConverter = textConverter;
 var lineParser = function (text, termIndex) {
     var _a;
     if (text === "iden" || text === "unit") {
