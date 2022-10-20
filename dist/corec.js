@@ -77,12 +77,6 @@ var pair = function (input, termA, termB) {
         var parserResult = (0, textConverter_1.lineParser)(termB.slice(1, -1), 0);
         tPart = { a: parserResult.a, b: parserResult.b };
     }
-    if (s === "pair" && t === "pair") {
-        var programResult = "<" + exports.corec[s](input, sPart.a, sPart.b) + "," + exports.corec[t](input, tPart.a, tPart.b) + ">";
-        console.log("programResult", programResult);
-        console.log("res", "<" + exports.corec[s](programResult, sPart.a, sPart.b) + "," + exports.corec[t](programResult, tPart.a, tPart.b) + ">");
-        return "<" + exports.corec[s](programResult, sPart.a, sPart.b) + "," + exports.corec[t](programResult, tPart.a, tPart.b) + ">";
-    }
     return "<" + exports.corec[s](input, sPart.a, sPart.b) + "," + exports.corec[t](input, tPart.a, tPart.b) + ">";
 };
 var case_ = function (input, termA, termB) {

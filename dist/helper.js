@@ -40,13 +40,13 @@ var deepCopy = function (oldObject) {
     return JSON.parse(JSON.stringify(oldObject));
 };
 var replaceAll = function (str, find, replace) {
-    return str.replace(new RegExp(find, "g"), replace);
+    return str.replace(new RegExp("^" + find + "$"), replace);
 };
 var programConverter = function (values) {
     var newValues = deepCopy(values);
     newValues.map(function (value, index) {
         newValues.slice(0, index).map(function (compiled_value) {
-            value.program = replaceAll(value.program, compiled_value["term"], compiled_value["program"]);
+            value.program = value.program.replaceAll(new RegExp("\\b" + compiled_value["term"] + "\\b", "gi"), compiled_value["program"]);
         });
     });
     return newValues;
