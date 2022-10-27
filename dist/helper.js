@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isProductType = exports.programConverter = exports.termArgumenetCount = exports.termChecker = exports.makeid = void 0;
+exports.productTypeBreaker = exports.isProductType = exports.programConverter = exports.termArgumenetCount = exports.termChecker = exports.makeid = void 0;
 var makeid = function (length) {
     var result = "";
     var characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -59,4 +59,26 @@ var isProductType = function (text) {
     throw "Input must be product type";
 };
 exports.isProductType = isProductType;
+var productTypeBreaker = function (text) {
+    var firstIndent;
+    var lastIndent;
+    var startCount = 0;
+    var endCount = 0;
+    for (var i = 0; i < text.length; i++) {
+        if (!firstIndent && text[i] === "(") {
+            firstIndent = i;
+        }
+        if (text[i] === "(")
+            startCount++;
+        if (text[i] === ")")
+            endCount++;
+        if (!lastIndent && startCount > 0 && endCount > 0) {
+            if (startCount - endCount === 0) {
+                lastIndent = i;
+            }
+        }
+    }
+    return { a: text.slice((firstIndent || 0) + 1, lastIndent), b: text.slice((lastIndent || 0) + 2, text.length - 1) };
+};
+exports.productTypeBreaker = productTypeBreaker;
 //# sourceMappingURL=helper.js.map

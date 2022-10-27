@@ -83,9 +83,8 @@ var pair = function (input, termA, termB) {
 };
 var case_ = function (input, termA, termB) {
     // @TO-DO throw
-    var modifiedInput = input.split(",");
-    var newFirstItem = modifiedInput[0].split("(").pop().split(")")[0];
-    var finalInput = "<" + newFirstItem + ">," + modifiedInput.slice(1).join(",");
+    var newFirstItem = (0, helper_1.productTypeBreaker)(input);
+    var finalInput = "<" + newFirstItem.a + "," + newFirstItem.b + ">";
     if (input.charAt(2) === "L") {
         var line = termA.length > 6 ? (0, textConverter_1.lineParser)(termA.slice(1, -1), 0) : termA;
         finalInput = termA.length > 6 ? finalInput : input;
