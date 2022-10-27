@@ -1,4 +1,4 @@
-import { isProductType, termChecker } from "./helper";
+import { isProductType, productTypeBreaker, termChecker } from "./helper";
 import { lineParser } from "./textConverter";
 
 const unit = (a: string) => {
@@ -49,6 +49,7 @@ const take = (input: string, term: any): any => {
 
   const line = term.length > 6 ? lineParser(term.slice(1, -1), 0) : term;
   const s = termChecker(term.slice(1, 5));
+
   let modifiedInput = input.split(",").slice(1).join(",").substring(1);
 
   return corec[s](modifiedInput, line.a, line.b);
@@ -110,9 +111,8 @@ const pair = (input: string, termA: any, termB: any): any => {
 
 const case_ = (input: string, termA: any, termB: any): any => {
   // @TO-DO throw
-  const modifiedInput = input.split(",");
-  const newFirstItem = modifiedInput[0].split("(").pop()!.split(")")[0];
-  let finalInput = "<" + newFirstItem + ">," + modifiedInput.slice(1).join(",");
+  const newFirstItem = productTypeBreaker(input);
+  let finalInput = "<" + newFirstItem.a + "," + newFirstItem.b + ">";
 
   if (input.charAt(2) === "L") {
     const line = termA.length > 6 ? lineParser(termA.slice(1, -1), 0) : termA;

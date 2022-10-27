@@ -70,3 +70,28 @@ export const isProductType = (text: string) => {
 
   throw "Input must be product type";
 };
+
+export const productTypeBreaker = (text: string) => {
+  let firstIndent;
+  let lastIndent;
+  let startCount = 0;
+  let endCount = 0;
+
+  for (let i = 0; i < text.length; i++) {
+    if (!firstIndent && text[i] === "(") {
+      firstIndent = i;
+    }
+
+    if (text[i] === "(") startCount++;
+
+    if (text[i] === ")") endCount++;
+
+    if (!lastIndent && startCount > 0 && endCount > 0) {
+      if (startCount - endCount === 0) {
+        lastIndent = i;
+      }
+    }
+  }
+
+  return { a: text.slice((firstIndent || 0) + 1, lastIndent), b: text.slice((lastIndent || 0) + 2, text.length - 1) };
+};
